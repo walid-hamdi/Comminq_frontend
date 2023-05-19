@@ -27,10 +27,10 @@ jobs:
       - name: NPM install, build and test
         run: |
           npm install
-          npm run 
+          npm run
         # npm test
-        # env:
-        #   ENDPOINT: ${{ secrets.ENDPOINT }}
+        env:
+          ENDPOINT: ${{ secrets.NEXT_PUBLIC_ENDPOINT }}
         #   NODE_VERSION: ${{secrets.NODE_VERSION}}
 
   # Heavily modified deploy job to fit render.com
