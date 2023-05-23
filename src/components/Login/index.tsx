@@ -1,11 +1,17 @@
 import { useState, useEffect } from "react";
-import { googleLogout, useGoogleLogin } from "@react-oauth/google";
+import { useGoogleLogin } from "@react-oauth/google";
 import axios from "axios";
-import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { Button, Grid } from "@mui/material";
 
-export default function LoginWithGoogle() {
+interface Props {
+  profile: any;
+  setProfile: (data: any) => void;
+}
+
+export default function LoginWithGoogle({ profile,setProfile }: Props) {
   const [user, setUser] = useState<any>([]);
-  const [profile, setProfile] = useState<null | any>([]);
+  const router = useRouter();
 
   const login = useGoogleLogin({
     onSuccess: (codeResponse) => setUser(codeResponse),
@@ -29,48 +35,26 @@ export default function LoginWithGoogle() {
         })
         .catch((err) => console.log(err));
     }
-  }, [user]);
+  }, [user,setProfile]);
 
-  // const saveUserToServer = (profileData: {
-  //   picture: string;
-  //   name: string;
-  //   email: string;
-  // }) => {
-  //   axios
-  //     .post("http://localhost:4000/api/user/google-login", {
-  //       tokenId: user.access_token,
-  //     })
-  //     .then((response) => {
-  //       const { token, user } = response.data;
-  //       console.log("USER FROM DB:", user);
-  //     })
-  //     .catch((error) => {
-  //       console.error(error);
-  //       // Handle the error, e.g., display an error message
-  //     });
-  // };
-
-  // log out function to log the user out of google and set the profile array to null
-  const logOut = () => {
-    googleLogout();
-    setProfile(null);
-  };
+  useEffect(() => {
+    if (profile) return router.replace("/");
+  }, [profile, router]);
 
   return (
-    <div>
-      {profile ? (
-        <div>
-          <Image src={profile.picture} alt="user image" />
-          <h3>User Logged in</h3>
-          <p>Name: {profile.name}</p>
-          <p>Email Address: {profile.email}</p>
-          <br />
-          <br />
-          <button onClick={logOut}>Log out</button>
-        </div>
-      ) : (
-        <button onClick={() => login()}>Sign in with Google 🚀 </button>
-      )}
-    </div>
+    <Grid
+      container
+      spacing={0}
+      direction="column"
+      alignItems="center"
+      justifyContent="center"
+      sx={{ minHeight: "100vh" }}
+    >
+      <Grid item xs={3}>
+        <Button variant="contained" onClick={() => login()}>
+          Sign in with Google 🚀
+        </Button>
+      </Grid>
+    </Grid>
   );
 }

@@ -1,11 +1,11 @@
 "use client";
-import Sidebar from "@/layout/Sidebar";
 import "./globals.css";
 import { darkTheme, lightTheme } from "./theme/themes";
 import { ThemeProvider, CssBaseline, Container } from "@mui/material";
 import { GoogleOAuthProvider } from "@react-oauth/google";
+import CustomAppBar from "@/layout/AppBar";
+import LoginWithGoogle from "@/components/Login";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 
 export default function RootLayout({
   children,
@@ -13,6 +13,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   const [darkMode, setDarkMode] = useState(true);
+  const [profile, setProfile] = useState<null | any>([]);
+
+  useEffect(() => {
+    if (!profile) return;
+  }, [profile]);
 
   return (
     <html lang="en">
@@ -27,14 +32,19 @@ export default function RootLayout({
           <GoogleOAuthProvider
             clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID ?? ""}
           >
-            <Container>
-              <Sidebar
-                darkMode={darkMode}
-                setDarkMode={setDarkMode}
-                isLoggedIn={false}
-              />
-              {children}
-            </Container>
+            {!profile ? (
+              <LoginWithGoogle profile={profile} setProfile={setProfile} />
+            ) : (
+              <>
+                <CustomAppBar
+                  darkMode={darkMode}
+                  setDarkMode={setDarkMode}
+                  setProfile={setProfile}
+                  profile={profile}
+                />
+                <Container>{children}</Container>
+              </>
+            )}
           </GoogleOAuthProvider>
         </body>
       </ThemeProvider>
