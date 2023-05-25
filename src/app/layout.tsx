@@ -1,23 +1,24 @@
 "use client";
-import "./globals.css";
-import { darkTheme, lightTheme } from "./theme/themes";
-import { ThemeProvider, CssBaseline, Container } from "@mui/material";
 import { GoogleOAuthProvider } from "@react-oauth/google";
-import CustomAppBar from "@/layout/AppBar";
-import LoginWithGoogle from "@/components/Login";
+import { ColorModeScript } from "@chakra-ui/react";
+
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+
+import "./globals.css";
+import { Providers, theme } from "./providers";
 
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const [darkMode, setDarkMode] = useState(true);
-  const [profile, setProfile] = useState<null | any>([]);
+  const [isLoggedIn, setLoggedIn] = useState(true);
+  const router = useRouter();
 
   useEffect(() => {
-    if (!profile) return;
-  }, [profile]);
+    if (!isLoggedIn) router.replace("/login");
+  }, [isLoggedIn, router]);
 
   return (
     <html lang="en">
@@ -26,28 +27,17 @@ export default function RootLayout({
         <meta name="description" content="Comminq Communication Platform" />
         <link rel="icon" href="./favicon.ico" />
       </head>
-      <ThemeProvider theme={darkMode ? darkTheme : lightTheme}>
-        <CssBaseline />
-        <body>
+      <body>
+        <ColorModeScript initialColorMode={theme.config.initialColorMode} />
+
+        <Providers>
           <GoogleOAuthProvider
             clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID ?? ""}
           >
-            {!profile ? (
-              <LoginWithGoogle profile={profile} setProfile={setProfile} />
-            ) : (
-              <>
-                <CustomAppBar
-                  darkMode={darkMode}
-                  setDarkMode={setDarkMode}
-                  setProfile={setProfile}
-                  profile={profile}
-                />
-                <Container>{children}</Container>
-              </>
-            )}
+            <main>{children}</main>
           </GoogleOAuthProvider>
-        </body>
-      </ThemeProvider>
+        </Providers>
+      </body>
     </html>
   );
 }
