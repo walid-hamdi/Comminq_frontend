@@ -27,7 +27,9 @@ export default function Register() {
     >
       <Stack spacing={8} mx={"auto"} maxW={"xl"} py={12} px={6}>
         <Stack align={"center"}>
-          <Heading fontSize={"4xl"}>🚀 Sign up for Comminq 🎙️</Heading>
+          <Heading textAlign="center" fontSize={"3xl"}>
+            📝 Join the Comminq Community
+          </Heading>
         </Stack>
         <Box
           rounded={"lg"}

@@ -1,5 +1,4 @@
-"use client";
-import { ReactNode } from "react";
+import { ReactNode, ReactText } from "react";
 import {
   IconButton,
   Box,
@@ -15,30 +14,27 @@ import {
   BoxProps,
   FlexProps,
 } from "@chakra-ui/react";
-import {
-  FiHome,
-  FiTrendingUp,
-  FiCompass,
-  FiStar,
-  FiSettings,
-  FiMenu,
-} from "react-icons/fi";
+import { FiMenu } from "react-icons/fi";
+import { FaHome, FaChartLine, FaEnvelope, FaUser, FaCog } from "react-icons/fa";
+
 import { IconType } from "react-icons";
-import { ReactText } from "react";
 import Image from "next/image";
+import NextLink from "next/link";
 
 import logo from "../../assets/logo.png";
+import { usePathname } from "next/navigation";
 
 interface LinkItemProps {
   name: string;
   icon: IconType;
+  route: string;
 }
 const LinkItems: Array<LinkItemProps> = [
-  { name: "Home", icon: FiHome },
-  { name: "Trending", icon: FiTrendingUp },
-  { name: "Explore", icon: FiCompass },
-  { name: "Favourites", icon: FiStar },
-  { name: "Settings", icon: FiSettings },
+  { name: "Home", icon: FaHome, route: "/" },
+  { name: "Learning", icon: FaChartLine, route: "/learning" },
+  { name: "Messages", icon: FaEnvelope, route: "/messages" },
+  { name: "Profile", icon: FaUser, route: "/profile" },
+  { name: "Settings", icon: FaCog, route: "/settings" },
 ];
 
 export default function Sidebar({ children }: { children: ReactNode }) {
@@ -95,7 +91,7 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
         <CloseButton display={{ base: "flex", md: "none" }} onClick={onClose} />
       </Flex>
       {LinkItems.map((link) => (
-        <NavItem key={link.name} icon={link.icon}>
+        <NavItem key={link.name} icon={link.icon} route={link.route}>
           {link.name}
         </NavItem>
       ))}
@@ -106,40 +102,48 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
 interface NavItemProps extends FlexProps {
   icon: IconType;
   children: ReactText;
+  route: string;
 }
-const NavItem = ({ icon, children, ...rest }: NavItemProps) => {
+
+const NavItem = ({ icon, children, route, ...rest }: NavItemProps) => {
+  const pathname = usePathname();
+  const isActive = pathname === route;
+
   return (
-    <Link
-      href="#"
-      style={{ textDecoration: "none" }}
-      _focus={{ boxShadow: "none" }}
-    >
-      <Flex
-        align="center"
-        p="4"
-        mx="4"
-        borderRadius="lg"
-        role="group"
-        cursor="pointer"
-        _hover={{
-          bg: "cyan.400",
-          color: "white",
-        }}
-        {...rest}
-      >
-        {icon && (
-          <Icon
-            mr="4"
-            fontSize="16"
-            _groupHover={{
-              color: "white",
-            }}
-            as={icon}
-          />
-        )}
-        {children}
-      </Flex>
-    </Link>
+    <NextLink href={route} passHref>
+      <Link style={{ textDecoration: "none" }} _focus={{ boxShadow: "none" }}>
+        <Flex
+          align="center"
+          p="3"
+          mx="4"
+          my="2"
+          borderRadius="lg"
+          role="group"
+          cursor="pointer"
+          _hover={{
+            bg: "yellow.500",
+            color: "gray.900",
+          }}
+          {...(isActive && {
+            bg: "yellow.500",
+            color: "gray.900",
+          })}
+          {...rest}
+        >
+          {icon && (
+            <Icon
+              mr="4"
+              fontSize="16"
+              _groupHover={{
+                color: "gray.900",
+              }}
+              as={icon}
+            />
+          )}
+          {children}
+        </Flex>
+      </Link>
+    </NextLink>
   );
 };
 
@@ -166,7 +170,7 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
         icon={<FiMenu />}
       />
 
-      <Text fontSize="2xl" ml="8" fontFamily="monospace" fontWeight="bold">
+      <Text fontSize="2xl" ml="8" fontWeight="bold">
         Comminq
       </Text>
       <Image src={logo} alt="Comminq logo" width={60} height={60} />
