@@ -1,12 +1,13 @@
 "use client";
 import { GoogleOAuthProvider } from "@react-oauth/google";
-import { ColorModeScript } from "@chakra-ui/react";
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import "./globals.css";
-import { Providers, theme } from "./providers";
+import ColorModeToggle from "@/components/SwitchMode";
+import { ThemeProviders } from "./themes/themeProviders";
+import { Box, CSSReset } from "@chakra-ui/react";
 
 export default function RootLayout({
   children,
@@ -28,15 +29,22 @@ export default function RootLayout({
         <link rel="icon" href="./favicon.ico" />
       </head>
       <body>
-        <ColorModeScript initialColorMode={theme.config.initialColorMode} />
-
-        <Providers>
+        <ThemeProviders>
           <GoogleOAuthProvider
             clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID ?? ""}
           >
-            <main>{children}</main>
+            <main>
+              <Box
+                position="absolute"
+                top={{ base: "4", lg: "6" }}
+                right={{ base: "4", lg: "8" }}
+              >
+                <ColorModeToggle />
+              </Box>
+              {children}
+            </main>
           </GoogleOAuthProvider>
-        </Providers>
+        </ThemeProviders>
       </body>
     </html>
   );

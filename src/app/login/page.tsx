@@ -16,6 +16,7 @@ import {
   useColorModeValue,
 } from "@chakra-ui/react";
 import GoogleButton from "../../components/GoogleButton";
+import ColorModeToggle from "@/components/SwitchMode";
 
 export default function Login() {
   return (
