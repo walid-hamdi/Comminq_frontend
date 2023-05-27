@@ -114,7 +114,7 @@ const NavItem = ({ icon, children, route, ...rest }: NavItemProps) => {
       <Link style={{ textDecoration: "none" }} _focus={{ boxShadow: "none" }}>
         <Flex
           align="center"
-          p="3"
+          p="2"
           mx="4"
           my="2"
           borderRadius="lg"
@@ -122,7 +122,7 @@ const NavItem = ({ icon, children, route, ...rest }: NavItemProps) => {
           cursor="pointer"
           _hover={{
             bg: !isActive && "gray.700",
-            // color: "gray.900",
+            color: !isActive && "white",
           }}
           {...(isActive && {
             bg: "yellow.500",
