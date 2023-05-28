@@ -1,8 +1,10 @@
+import { AddIcon } from "@chakra-ui/icons";
 import {
   Button,
   ButtonProps,
   FormControl,
   FormLabel,
+  IconButton,
   Input,
   Modal,
   ModalBody,
@@ -14,7 +16,6 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import React from "react";
-import { BsPlusLg } from "react-icons/bs";
 
 export default function CreateRoom(props: ButtonProps) {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -26,12 +27,11 @@ export default function CreateRoom(props: ButtonProps) {
     <>
       <Button
         onClick={onOpen}
-        aria-label="Add room"
-        _focus={{ boxShadow: "none" }}
-        w="fit-content"
+        variant="outline"
+        leftIcon={<AddIcon />}
         {...props}
       >
-        <BsPlusLg />
+        Add New Room
       </Button>
 
       <Modal

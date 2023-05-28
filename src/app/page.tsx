@@ -1,5 +1,4 @@
 "use client";
-import CreateRoom from "@/components/CreateRoom";
 import Sidebar from "@/components/Sidebar";
 import {
   Box,
@@ -62,24 +61,23 @@ const Card = ({ heading, description, icon, href }: CardProps) => {
 export default function Home() {
   return (
     <Sidebar>
-      <Box p={4}>
-        <CreateRoom />
-        <Stack spacing={4} as={Container} maxW={"3xl"} textAlign={"center"}>
+      <Box py={4}>
+        <Stack spacing={4} as={Container} maxW={"4xl"} textAlign={"center"}>
           <Heading fontSize={{ base: "2xl", sm: "4xl" }} fontWeight={"bold"}>
-            🌟 Embrace the Comminq Community 🚀
+            🌟 Welcome to the Comminq Community 🚀
           </Heading>
-          <Text color={"gray.600"} fontSize={{ base: "sm", sm: "lg" }}>
-            🎉 Dive into any available room or create your own adventure! 💫
+          <Text color={"gray.600"} fontSize={{ base: "lg", sm: "xl" }}>
+            🎉 Join the revolution of boundless possibilities! 💫
           </Text>
         </Stack>
-        <Container maxW={"6xl"} mt={14}>
+        <Container maxW={"10xl"} mt={10}>
           <Grid
             templateColumns={{
               base: "1fr",
               sm: "repeat(2, 1fr)",
               md: "repeat(4, 1fr)",
             }}
-            gap={4}
+            gap={3}
             justifyItems="center"
             justifyContent="center"
             flexWrap="wrap"

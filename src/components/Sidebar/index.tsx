@@ -23,6 +23,7 @@ import NextLink from "next/link";
 
 import logo from "../../assets/logo.png";
 import { usePathname } from "next/navigation";
+import CreateRoom from "../CreateRoom";
 
 interface LinkItemProps {
   name: string;
@@ -95,6 +96,10 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
           {link.name}
         </NavItem>
       ))}
+
+      <Box mx="4" mt="16">
+        <CreateRoom />
+      </Box>
     </Box>
   );
 };

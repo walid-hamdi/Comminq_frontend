@@ -36,8 +36,8 @@ export default function RootLayout({
             <main>
               <Box
                 position="absolute"
-                top={{ base: "4", lg: "6" }}
-                right={{ base: "4", lg: "8" }}
+                top={{ base: "6", lg: "6" }}
+                right={{ base: "4", lg: "12" }}
               >
                 <ColorModeToggle />
               </Box>
