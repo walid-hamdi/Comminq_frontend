@@ -9,6 +9,7 @@ export default function ColorModeToggle(props: ButtonProps) {
       onClick={toggleColorMode}
       _focus={{ boxShadow: "none" }}
       w="fit-content"
+      size={{ base: "sm", md: "md" }}
       {...props}
     >
       {colorMode === "light" ? <BsMoonStarsFill /> : <BsSun />}
