@@ -46,7 +46,7 @@ export default function Register() {
       const errors: Partial<RegisterFormValues> = {};
 
       if (!values.name) {
-        errors.email = "Name is required";
+        errors.name = "Name is required";
       }
       if (!values.email) {
         errors.email = "Email is required";

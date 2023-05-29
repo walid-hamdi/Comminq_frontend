@@ -28,6 +28,7 @@ import logo from "../../assets/logo.png";
 import { usePathname, useRouter } from "next/navigation";
 import CreateRoom from "../CreateRoom";
 import { googleLogout } from "@react-oauth/google";
+import ProfileAvatar from "../ProfileAvatar";
 
 interface LinkItemProps {
   name: string;
@@ -98,17 +99,18 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
 
         <CloseButton display={{ base: "flex", md: "none" }} onClick={onClose} />
       </Flex>
+      <ProfileAvatar />
       {LinkItems.map((link) => (
         <NavItem key={link.name} icon={link.icon} route={link.route}>
           {link.name}
         </NavItem>
       ))}
 
-      <Box mx="4" mt="16">
+      {/* <Box mx="4" mt="16">
         <CreateRoom />
-      </Box>
+      </Box> */}
 
-      <Box mx="4" mt="16">
+      <Box mx="4" mt="12">
         <Button
           onClick={() => {
             router.push("/login");
