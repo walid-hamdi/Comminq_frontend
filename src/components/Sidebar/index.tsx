@@ -13,6 +13,7 @@ import {
   useDisclosure,
   BoxProps,
   FlexProps,
+  Button,
 } from "@chakra-ui/react";
 import { FiMenu } from "react-icons/fi";
 import { FaHome, FaChartLine, FaEnvelope, FaUser, FaCog } from "react-icons/fa";
@@ -21,9 +22,12 @@ import { IconType } from "react-icons";
 import Image from "next/image";
 import NextLink from "next/link";
 
+import Cookies from "js-cookie";
+
 import logo from "../../assets/logo.png";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import CreateRoom from "../CreateRoom";
+import { googleLogout } from "@react-oauth/google";
 
 interface LinkItemProps {
   name: string;
@@ -40,6 +44,7 @@ const LinkItems: Array<LinkItemProps> = [
 
 export default function Sidebar({ children }: { children: ReactNode }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
+
   return (
     <Box minH="100vh" bg={useColorModeValue("gray.100", "gray.900")}>
       <SidebarContent
@@ -73,6 +78,8 @@ interface SidebarProps extends BoxProps {
 }
 
 const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
+  const router = useRouter();
+
   return (
     <Box
       bg={useColorModeValue("white", "gray.900")}
@@ -99,6 +106,19 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
 
       <Box mx="4" mt="16">
         <CreateRoom />
+      </Box>
+
+      <Box mx="4" mt="16">
+        <Button
+          onClick={() => {
+            router.push("/login");
+            Cookies.remove("comminq_auth_token");
+            Cookies.remove("comminq_google_auth_token");
+            googleLogout();
+          }}
+        >
+          Logout
+        </Button>
       </Box>
     </Box>
   );
