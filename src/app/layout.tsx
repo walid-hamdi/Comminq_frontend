@@ -1,26 +1,14 @@
 "use client";
 import { GoogleOAuthProvider } from "@react-oauth/google";
-
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-
-import "./globals.css";
-import ColorModeToggle from "@/components/SwitchMode";
 import { ThemeProviders } from "./themes/themeProviders";
-import { Box, CSSReset } from "@chakra-ui/react";
+import { Box } from "@chakra-ui/react";
+import ColorModeToggle from "@/components/SwitchMode";
 
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const [isLoggedIn, setLoggedIn] = useState(true);
-  const router = useRouter();
-
-  useEffect(() => {
-    if (!isLoggedIn) router.replace("/login");
-  }, [isLoggedIn, router]);
-
   return (
     <html lang="en">
       <head>
