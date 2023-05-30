@@ -12,23 +12,19 @@ import {
   Text,
   useDisclosure,
   BoxProps,
-  FlexProps,
-  Button,
+  FlexProps
 } from "@chakra-ui/react";
 import { FiMenu } from "react-icons/fi";
-import { FaHome, FaChartLine, FaEnvelope, FaUser, FaCog } from "react-icons/fa";
+import { FaHome, FaChartLine, FaEnvelope } from "react-icons/fa";
 
 import { IconType } from "react-icons";
 import Image from "next/image";
 import NextLink from "next/link";
 
-import Cookies from "js-cookie";
 
 import logo from "../../assets/logo.png";
-import { usePathname, useRouter } from "next/navigation";
-import CreateRoom from "../CreateRoom";
-import { googleLogout } from "@react-oauth/google";
-import ProfileAvatar from "../ProfileAvatar";
+import { usePathname} from "next/navigation";
+import UserMenu from "../UserMenu";
 
 interface LinkItemProps {
   name: string;
@@ -39,8 +35,6 @@ const LinkItems: Array<LinkItemProps> = [
   { name: "Home", icon: FaHome, route: "/" },
   { name: "Learning", icon: FaChartLine, route: "/learning" },
   { name: "Messages", icon: FaEnvelope, route: "/messages" },
-  { name: "Profile", icon: FaUser, route: "/profile" },
-  { name: "Settings", icon: FaCog, route: "/settings" },
 ];
 
 export default function Sidebar({ children }: { children: ReactNode }) {
@@ -79,8 +73,6 @@ interface SidebarProps extends BoxProps {
 }
 
 const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
-  const router = useRouter();
-
   return (
     <Box
       bg={useColorModeValue("white", "gray.900")}
@@ -99,29 +91,14 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
 
         <CloseButton display={{ base: "flex", md: "none" }} onClick={onClose} />
       </Flex>
-      <ProfileAvatar />
       {LinkItems.map((link) => (
         <NavItem key={link.name} icon={link.icon} route={link.route}>
           {link.name}
         </NavItem>
       ))}
 
-      {/* <Box mx="4" mt="16">
-        <CreateRoom />
-      </Box> */}
-
-      <Box mx="4" mt="12">
-        <Button
-          onClick={() => {
-            router.push("/login");
-            Cookies.remove("comminq_auth_token");
-            Cookies.remove("comminq_google_auth_token");
-            googleLogout();
-          }}
-        >
-          Logout
-        </Button>
-      </Box>
+      <UserMenu />
+    
     </Box>
   );
 };
@@ -185,9 +162,9 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
       height="20"
       alignItems="center"
       bg={useColorModeValue("white", "gray.900")}
-      borderBottomWidth="1px"
-      borderBottomColor={useColorModeValue("gray.200", "gray.700")}
-      justifyContent="flex-start"
+      borderTopWidth="1px"
+      borderTopColor={useColorModeValue("gray.200", "gray.700")}
+      // justifyContent="flex-end" // Align menu to the right
       {...rest}
     >
       <IconButton
@@ -201,6 +178,12 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
         Comminq
       </Text>
       <Image src={logo} alt="Comminq logo" width={60} height={60} />
+
+      {/* <IconButton
+        variant="outline"
+        aria-label="more options"
+        icon={<FiMoreVertical />}
+      /> */}
     </Flex>
   );
 };

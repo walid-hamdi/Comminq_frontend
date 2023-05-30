@@ -64,7 +64,7 @@ export default function Login() {
         const token = response.data.token;
 
         Cookies.set("comminq_auth_token", token);
-          setLoading(false); // End loading state
+        setLoading(false); // End loading state
         router.replace("/");
       } catch (error: any) {
         let errorMessage = "An error occurred during login.";
