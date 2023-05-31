@@ -17,7 +17,7 @@ import {
   useToast,
   FormErrorMessage,
 } from "@chakra-ui/react";
-import GoogleButton from "../../components/GoogleButton";
+import GoogleButton from "../../components/GoogleAuthButton";
 import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
 import axios from "axios";

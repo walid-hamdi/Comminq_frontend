@@ -12,7 +12,7 @@ import {
   Text,
   useDisclosure,
   BoxProps,
-  FlexProps
+  FlexProps,
 } from "@chakra-ui/react";
 import { FiMenu } from "react-icons/fi";
 import { FaHome, FaChartLine, FaEnvelope } from "react-icons/fa";
@@ -21,9 +21,8 @@ import { IconType } from "react-icons";
 import Image from "next/image";
 import NextLink from "next/link";
 
-
 import logo from "../../assets/logo.png";
-import { usePathname} from "next/navigation";
+import { usePathname } from "next/navigation";
 import UserMenu from "../UserMenu";
 
 interface LinkItemProps {
@@ -84,10 +83,11 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
       {...rest}
     >
       <Flex h="20" alignItems="center" mx="8" justifyContent="space-between">
+        <Image src={logo} alt="Comminq logo" width={60} height={60} />
+
         <Text fontSize="2xl" fontFamily="monospace" fontWeight="bold">
           Comminq
         </Text>
-        <Image src={logo} alt="Comminq logo" width={60} height={60} />
 
         <CloseButton display={{ base: "flex", md: "none" }} onClick={onClose} />
       </Flex>
@@ -98,7 +98,6 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
       ))}
 
       <UserMenu />
-    
     </Box>
   );
 };

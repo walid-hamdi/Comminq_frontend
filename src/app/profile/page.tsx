@@ -1,6 +1,12 @@
 "use client";
+
 import Sidebar from "@/components/Sidebar";
+import UserProfile from "@/components/UserProfile";
 
 export default function page() {
-  return <Sidebar>Profile</Sidebar>;
+  return (
+    <Sidebar>
+      <UserProfile />
+    </Sidebar>
+  );
 }
