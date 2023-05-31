@@ -10,6 +10,12 @@ interface UserInfo {
   access_token: string;
 }
 
+interface AuthUser {
+  name: string;
+  email: string;
+  picture: string;
+}
+
 export default function GoogleButton() {
   const [user, setUser] = useState<UserInfo | null>(null);
   const [isLoading, setLoading] = useState(false);
@@ -44,10 +50,33 @@ export default function GoogleButton() {
           }
         )
         .then((res) => {
-          // set cookie and go to /
-          Cookies.set("comminq_google_auth_token", user.access_token);
-          setLoading(false);
-          router.replace("/");
+          console.log({ picture: res.data.picture });
+          axios
+            .post(
+              "https://comminq-backend.onrender.com/api/user/google-login",
+              {
+                email: res.data.email,
+                name: res.data.name,
+                picture: res.data.picture,
+              }
+            )
+            .then((res) => {
+              Cookies.set("comminq_auth_token", res.data.token);
+              setLoading(false);
+              router.replace("/");
+            })
+            .catch((err) => {
+              console.log(err);
+              setLoading(false);
+              toast({
+                title: "Error",
+                description:
+                  "An error occurred while retrieving user information.",
+                status: "error",
+                duration: 3000,
+                isClosable: true,
+              });
+            });
         })
         .catch((err) => {
           console.log(err);

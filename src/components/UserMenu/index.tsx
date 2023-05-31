@@ -1,6 +1,5 @@
 "use client";
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Button,
   Flex,
@@ -19,26 +18,54 @@ import { FiUser, FiSettings, FiLogOut, FiMoreHorizontal } from "react-icons/fi";
 import { googleLogout } from "@react-oauth/google";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
+import axios from "axios";
 
 export default function UserMenu() {
   const [isOpen, setIsOpen] = useState(false);
+  const [avatar, setAvatar] = useState("");
+  const [username, setUsername] = useState("");
+  const [loading, setLoading] = useState(true);
   const router = useRouter();
 
   const handleMenuClick = () => {
     setIsOpen(!isOpen);
   };
 
-  const handleMenuItemClick = (item: any) => {
-    if (item === "logout") {
+  const handleMenuItemClick = (item: string) => {
+    if (item === "Logout") {
       router.push("/login");
       Cookies.remove("comminq_auth_token");
-      Cookies.remove("comminq_google_auth_token");
       googleLogout();
+    }
+    if (item === "Profile") {
+      router.push("/profile");
     }
   };
 
+  useEffect(() => {
+    const token = Cookies.get("comminq_auth_token");
+
+    setLoading(true);
+    axios
+      .get("https://comminq-backend.onrender.com/api/user/profile", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((response) => {
+        const { name, picture } = response.data;
+        setUsername(name);
+        setAvatar(picture);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error(error);
+        setLoading(false);
+      });
+  }, []);
+
   return (
-    <Menu placement="top-end" isOpen={isOpen} onClose={() => setIsOpen(false)}>
+    <Menu placement="top" isOpen={isOpen} onClose={() => setIsOpen(false)}>
       <MenuButton
         pos="absolute"
         bottom="4"
@@ -51,13 +78,14 @@ export default function UserMenu() {
         _hover={{
           bg: "rgba(16, 12, 12, 0.54)",
         }}
+        isLoading={loading}
       >
         <Flex align="center" px="4" py="2" borderRadius="md">
-          <Avatar size="sm" name="Username" src="/path/to/profile-picture.jpg">
+          <Avatar size="sm" name={username} src={avatar}>
             <AvatarBadge boxSize="1em" bg="green.500" />
           </Avatar>
           <Text fontSize="sm" ml="3">
-            Username
+            {username}
           </Text>
           <Spacer />
           <Box as={FiMoreHorizontal} size="20px" color="gray.500" />

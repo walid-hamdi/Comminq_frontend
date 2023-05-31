@@ -64,10 +64,10 @@ export default function Home() {
       <Box py={4}>
         <Stack spacing={4} as={Container} maxW={"4xl"} textAlign={"center"}>
           <Heading fontSize={{ base: "2xl", sm: "4xl" }} fontWeight={"bold"}>
-            Comminq Community 🚀
+            Comminq Community
           </Heading>
           <Text color={"gray.600"} fontSize={{ base: "lg", sm: "xl" }}>
-            🎉 Join the revolution of boundless possibilities! 💫
+            Join the revolution of boundless possibilities!
           </Text>
         </Stack>
         <Container maxW={"10xl"} mt={10}>

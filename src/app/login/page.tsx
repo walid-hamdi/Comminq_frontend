@@ -17,7 +17,7 @@ import {
   FormErrorMessage,
   useToast,
 } from "@chakra-ui/react";
-import GoogleButton from "../../components/GoogleButton";
+import GoogleButton from "../../components/GoogleAuthButton";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -162,7 +162,7 @@ export default function Login() {
                   _hover={{
                     bg: "blue.500",
                   }}
-                  isLoading={isLoading}
+                  isLoading={formik.isSubmitting}
                 >
                   Sign in
                 </Button>
