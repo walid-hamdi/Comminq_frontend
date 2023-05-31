@@ -4,22 +4,40 @@ import {
   Alert,
   AlertIcon,
   Avatar,
-  Box,
   Flex,
   Spinner,
   Text,
+  Center,
+  Box,
+  Image,
+  Stack,
+  Heading,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalCloseButton,
+  ModalBody,
+  useDisclosure,
+  useColorModeValue,
+  useColorMode,
 } from "@chakra-ui/react";
 import axios from "axios";
 import Cookies from "js-cookie";
+interface UserProfileProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
 
-interface UserProfile {
+interface UserProfileData {
   name: string;
   email: string;
   picture: string;
 }
 
-const UserProfile: React.FC = () => {
-  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
+const UserProfile = ({ isOpen, onClose }: UserProfileProps) => {
+  const { colorMode } = useColorMode();
+  const [userProfile, setUserProfile] = useState<UserProfileData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -51,38 +69,87 @@ const UserProfile: React.FC = () => {
     );
   }
 
-  if (error) {
-    return (
-      <Flex justify="center" align="center" minHeight="100vh">
-        <Alert status="error" variant="left-accent">
-          <AlertIcon />
-          Error: {error}
-        </Alert>
-      </Flex>
-    );
-  }
-
-  if (!userProfile) {
-    return (
-      <Flex justify="center" align="center" minHeight="100vh">
-        <Alert status="info" variant="left-accent">
-          <AlertIcon />
-          No user profile found.
-        </Alert>
-      </Flex>
-    );
-  }
+  const bgColor = colorMode === "light" ? "white" : "gray.800";
+  const gradientColor =
+    colorMode === "light"
+      ? "linear(to-r, blue.200, teal.300)"
+      : "linear(to-r, gray.700, purple.800)";
 
   return (
-    <Flex justify="center" direction="column" align="center" minHeight="100vh">
-      <Avatar size="xl" name={userProfile.name} src={userProfile.picture} />
-      <Text fontSize="xl" fontWeight="bold" mt={4}>
-        {userProfile.name}
-      </Text>
-      <Text fontSize="md" color="gray.500">
-        {userProfile.email}
-      </Text>
-    </Flex>
+    <Modal isOpen={isOpen} onClose={onClose} isCentered>
+      <ModalOverlay />
+      <ModalContent>
+        <ModalHeader>Profile</ModalHeader>
+        <ModalCloseButton />
+        <ModalBody>
+          {error && (
+            <Flex justify="center" align="center">
+              <Alert status="error" variant="left-accent">
+                <AlertIcon />
+                Error: {error}
+              </Alert>
+            </Flex>
+          )}
+          {!userProfile ? (
+            <Flex justify="center" align="center">
+              <Alert status="info" variant="left-accent">
+                <AlertIcon />
+                No user profile found.
+              </Alert>
+            </Flex>
+          ) : (
+            <Box
+              mb={4}
+              w={"full"}
+              bg={bgColor}
+              boxShadow={"2xl"}
+              rounded={"md"}
+              overflow={"hidden"}
+            >
+              <Box h={"120px"} w={"full"} bgGradient={gradientColor} />
+              <Flex justify={"center"} mt={-12}>
+                <Avatar
+                  size={"xl"}
+                  src={userProfile.picture}
+                  name={userProfile.name}
+                  css={{
+                    border: "2px solid white",
+                  }}
+                />
+              </Flex>
+
+              <Box p={6}>
+                <Stack spacing={0} align={"center"} mb={5}>
+                  <Heading
+                    fontSize={"2xl"}
+                    fontWeight={500}
+                    fontFamily={"body"}
+                  >
+                    {userProfile.name}
+                  </Heading>
+                  <Text color={"gray.500"}>{userProfile.email}</Text>
+                </Stack>
+
+                <Stack direction={"row"} justify={"center"} spacing={6}>
+                  <Stack spacing={0} align={"center"}>
+                    <Text fontWeight={600}>23k</Text>
+                    <Text fontSize={"sm"} color={"gray.500"}>
+                      Followers
+                    </Text>
+                  </Stack>
+                  <Stack spacing={0} align={"center"}>
+                    <Text fontWeight={600}>23k</Text>
+                    <Text fontSize={"sm"} color={"gray.500"}>
+                      Followers
+                    </Text>
+                  </Stack>
+                </Stack>
+              </Box>
+            </Box>
+          )}
+        </ModalBody>
+      </ModalContent>
+    </Modal>
   );
 };
 
