@@ -13,6 +13,8 @@ import {
   MenuItem,
   AvatarBadge,
   HStack,
+  Spinner,
+  Center,
 } from "@chakra-ui/react";
 import { FiUser, FiSettings, FiLogOut, FiMoreHorizontal } from "react-icons/fi";
 import { googleLogout } from "@react-oauth/google";
@@ -78,7 +80,6 @@ export default function UserMenu() {
         _hover={{
           bg: "rgba(16, 12, 12, 0.54)",
         }}
-        isLoading={loading}
       >
         <Flex align="center" px="4" py="2" borderRadius="md">
           <Avatar size="sm" name={username} src={avatar}>
@@ -90,18 +91,17 @@ export default function UserMenu() {
           <Spacer />
           <Box as={FiMoreHorizontal} size="20px" color="gray.500" />
         </Flex>
+        {loading && (
+          <Center>
+            <Spinner size="sm" />
+          </Center>
+        )}
       </MenuButton>
       <MenuList>
         <MenuItem onClick={() => handleMenuItemClick("Profile")}>
           <HStack spacing="2">
             <Box as={FiUser} size="18px" />
             <Text>Profile</Text>
-          </HStack>
-        </MenuItem>
-        <MenuItem onClick={() => handleMenuItemClick("Settings")}>
-          <HStack spacing="2">
-            <Box as={FiSettings} size="18px" />
-            <Text>Settings</Text>
           </HStack>
         </MenuItem>
         <MenuItem onClick={() => handleMenuItemClick("Logout")}>

@@ -4,7 +4,6 @@ import {
   Alert,
   AlertIcon,
   Avatar,
-  Box,
   Flex,
   Spinner,
   Text,
@@ -22,6 +21,7 @@ const UserProfile: React.FC = () => {
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
 
   useEffect(() => {
     const token = Cookies.get("comminq_auth_token");
@@ -85,5 +85,4 @@ const UserProfile: React.FC = () => {
     </Flex>
   );
 };
-
 export default UserProfile;
