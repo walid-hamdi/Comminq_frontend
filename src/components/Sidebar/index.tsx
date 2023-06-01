@@ -13,6 +13,7 @@ import {
   useDisclosure,
   BoxProps,
   FlexProps,
+  Spacer,
 } from "@chakra-ui/react";
 import { FiMenu } from "react-icons/fi";
 import { FaHome, FaChartLine, FaEnvelope } from "react-icons/fa";
@@ -157,6 +158,7 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
       px={{ base: 4, md: 24 }}
       height="20"
       alignItems="center"
+      justifyContent="space-between" // Updated line
       bg={useColorModeValue("white", "gray.900")}
       borderTopWidth="1px"
       borderTopColor={useColorModeValue("gray.200", "gray.700")}
@@ -167,14 +169,17 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
         onClick={onOpen}
         aria-label="open menu"
         icon={<FiMenu />}
-        mr="3"
       />
-      <Box mr="2">
+      <Flex alignItems="center">
+        {" "}
+        {/* Updated line */}
         <Image src={logo} alt="Comminq logo" width={60} height={60} />
-      </Box>
-      <Text fontSize="2xl" fontWeight="bold">
-        Comminq
-      </Text>
+        <Text fontSize="2xl" fontWeight="bold">
+          Comminq
+        </Text>
+      </Flex>
+      <Spacer /> {/* Added line */}
+      <UserMenu /> {/* Moved the UserMenu component to the right */}
     </Flex>
   );
 };
