@@ -61,14 +61,6 @@ const UserProfile = ({ isOpen, onClose }: UserProfileProps) => {
       });
   }, []);
 
-  if (loading) {
-    return (
-      <Flex justify="center" align="center" minHeight="100vh">
-        <Spinner size="xl" />
-      </Flex>
-    );
-  }
-
   const bgColor = colorMode === "light" ? "white" : "gray.800";
   const gradientColor =
     colorMode === "light"

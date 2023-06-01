@@ -33,8 +33,6 @@ interface LinkItemProps {
 }
 const LinkItems: Array<LinkItemProps> = [
   { name: "Home", icon: FaHome, route: "/" },
-  { name: "Learning", icon: FaChartLine, route: "/learning" },
-  { name: "Messages", icon: FaEnvelope, route: "/messages" },
 ];
 
 export default function Sidebar({ children }: { children: ReactNode }) {
@@ -80,14 +78,22 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
       borderRightColor={useColorModeValue("gray.200", "gray.700")}
       w={{ base: "full", md: 60 }}
       pos="fixed"
-      h="100vh"
+      h="full"
       {...rest}
     >
-      <Flex h="20" alignItems="center" mx="8" justifyContent="space-between">
-        <Image src={logo} alt="Comminq logo" width={60} height={60} />
-        <Text fontSize="2xl" fontFamily="monospace" fontWeight="bold">
-          Comminq
-        </Text>
+      <Flex
+        h="20"
+        alignItems="center"
+        justifyContent="space-between"
+        mx="8"
+        pr="4"
+      >
+        <Flex alignItems="center" align="center" gap="1">
+          <Image src={logo} alt="Comminq logo" width={60} height={60} />
+          <Text fontSize="2xl" fontFamily="monospace" fontWeight="bold">
+            Comminq
+          </Text>
+        </Flex>
         <CloseButton display={{ base: "flex", md: "none" }} onClick={onClose} />
       </Flex>
       {LinkItems.map((link) => (
@@ -158,7 +164,6 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
       px={{ base: 4, md: 24 }}
       height="20"
       alignItems="center"
-      justifyContent="space-between" // Updated line
       bg={useColorModeValue("white", "gray.900")}
       borderTopWidth="1px"
       borderTopColor={useColorModeValue("gray.200", "gray.700")}
@@ -171,15 +176,11 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
         icon={<FiMenu />}
       />
       <Flex alignItems="center">
-        {" "}
-        {/* Updated line */}
         <Image src={logo} alt="Comminq logo" width={60} height={60} />
         <Text fontSize="2xl" fontWeight="bold">
           Comminq
         </Text>
       </Flex>
-      <Spacer /> {/* Added line */}
-      <UserMenu /> {/* Moved the UserMenu component to the right */}
     </Flex>
   );
 };
