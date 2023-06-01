@@ -60,14 +60,6 @@ export default function Login() {
           { withCredentials: true } // Set withCredentials to true to enable sending cookies
         )
         .then((response) => {
-          const token = response.data.token;
-
-          // Set the token as an HTTP-only cookie
-          Cookies.set("comminq_auth_token", token, {
-            secure: true,
-            sameSite: "lax",
-          });
-
           router.replace("/");
         })
         .catch((error) => {
