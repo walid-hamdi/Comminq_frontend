@@ -72,7 +72,6 @@ export default function Login() {
         })
         .catch((error) => {
           let errorMessage = "An error occurred during login.";
-          console.log("ERRRRORRR:", error);
           if (
             error.response &&
             error.response.data &&
@@ -88,38 +87,6 @@ export default function Login() {
             isClosable: true,
           });
         });
-
-      // try {
-      //   const response = await axios.post(
-      //     "https://comminq-backend.onrender.com/api/user/login",
-      //     {
-      //       email: values.email,
-      //       password: values.password,
-      //     }
-      //   );
-
-      //   const token = response.data.token;
-
-      //   Cookies.set("comminq_auth_token", token);
-      //   router.replace("/");
-      // } catch (error: any) {
-      //   let errorMessage = "An error occurred during login.";
-
-      //   if (
-      //     error.response &&
-      //     error.response.data &&
-      //     error.response.data.error
-      //   ) {
-      //     errorMessage = error.response.data.error;
-      //   }
-      //   toast({
-      //     title: "Error",
-      //     description: errorMessage,
-      //     status: "error",
-      //     duration: 3000,
-      //     isClosable: true,
-      //   });
-      // }
     },
   });
 

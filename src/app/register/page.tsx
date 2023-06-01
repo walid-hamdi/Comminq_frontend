@@ -1,7 +1,6 @@
 "use client";
 import NextLink from "next/link";
 import { useFormik } from "formik";
-// import * as Yup from "yup";
 import {
   Flex,
   Box,
@@ -32,7 +31,6 @@ interface RegisterFormValues {
 
 export default function Register() {
   const router = useRouter();
-  const [isLoading, setLoading] = useState(false);
   const toast = useToast();
 
   const formik = useFormik<RegisterFormValues>({
@@ -68,20 +66,24 @@ export default function Register() {
 
     onSubmit: async (values) => {
       try {
-        setLoading(true);
         const response = await axios.post(
           "https://comminq-backend.onrender.com/api/user/register",
           {
             name: values.name,
             email: values.email,
             password: values.password,
-          }
+          },
+          { withCredentials: true } // Set withCredentials to true to enable sending cookies
         );
 
         const token = response.data.token;
 
-        Cookies.set("comminq_auth_token", token);
-        setLoading(false); // End loading state
+        // Set the token as an HTTP-only cookie
+        Cookies.set("comminq_auth_token", token, {
+          secure: true,
+          sameSite: "lax",
+        });
+
         router.replace("/");
       } catch (error: any) {
         let errorMessage = "An error occurred during register.";
@@ -100,7 +102,6 @@ export default function Register() {
           duration: 3000,
           isClosable: true,
         });
-        setLoading(false); // End loading state
       }
     },
   });
