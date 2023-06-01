@@ -79,16 +79,14 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
       borderRightColor={useColorModeValue("gray.200", "gray.700")}
       w={{ base: "full", md: 60 }}
       pos="fixed"
-      h="full"
+      h="100vh"
       {...rest}
     >
       <Flex h="20" alignItems="center" mx="8" justifyContent="space-between">
         <Image src={logo} alt="Comminq logo" width={60} height={60} />
-
         <Text fontSize="2xl" fontFamily="monospace" fontWeight="bold">
           Comminq
         </Text>
-
         <CloseButton display={{ base: "flex", md: "none" }} onClick={onClose} />
       </Flex>
       {LinkItems.map((link) => (
@@ -96,7 +94,6 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
           {link.name}
         </NavItem>
       ))}
-
       <UserMenu />
     </Box>
   );
@@ -163,7 +160,6 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
       bg={useColorModeValue("white", "gray.900")}
       borderTopWidth="1px"
       borderTopColor={useColorModeValue("gray.200", "gray.700")}
-      // justifyContent="flex-end" // Align menu to the right
       {...rest}
     >
       <IconButton
@@ -171,18 +167,14 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
         onClick={onOpen}
         aria-label="open menu"
         icon={<FiMenu />}
+        mr="3"
       />
-
-      <Text fontSize="2xl" ml="8" fontWeight="bold">
+      <Box mr="2">
+        <Image src={logo} alt="Comminq logo" width={60} height={60} />
+      </Box>
+      <Text fontSize="2xl" fontWeight="bold">
         Comminq
       </Text>
-      <Image src={logo} alt="Comminq logo" width={60} height={60} />
-
-      {/* <IconButton
-        variant="outline"
-        aria-label="more options"
-        icon={<FiMoreVertical />}
-      /> */}
     </Flex>
   );
 };
