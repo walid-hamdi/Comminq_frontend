@@ -83,6 +83,7 @@ export default function UserMenu() {
     <>
       <Menu placement="top" isOpen={isOpen} onClose={() => setIsOpen(false)}>
         <MenuButton
+          zIndex="100"
           mb="5"
           pos="absolute"
           bottom="0"
@@ -113,7 +114,6 @@ export default function UserMenu() {
               </>
             )}
           </Flex>
-          
         </MenuButton>
         <MenuList>
           <MenuItem onClick={() => handleMenuItemClick("Profile")}>
