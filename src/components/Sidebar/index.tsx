@@ -117,40 +117,38 @@ const NavItem = ({ icon, children, route, ...rest }: NavItemProps) => {
   const isActive = pathname === route;
 
   return (
-    <NextLink href={route} passHref>
-      <Link style={{ textDecoration: "none" }} _focus={{ boxShadow: "none" }}>
-        <Flex
-          align="center"
-          p="2"
-          mx="4"
-          my="2"
-          borderRadius="lg"
-          role="group"
-          cursor="pointer"
-          _hover={{
-            bg: !isActive && "gray.700",
-            color: !isActive && "white",
-          }}
-          {...(isActive && {
-            bg: "yellow.500",
-            color: "gray.900",
-          })}
-          {...rest}
-        >
-          {icon && (
-            <Icon
-              mr="4"
-              fontSize="16"
-              _groupHover={{
-                color: !isActive && "white",
-              }}
-              as={icon}
-            />
-          )}
-          {children}
-        </Flex>
-      </Link>
-    </NextLink>
+    <Link style={{ textDecoration: "none" }} _focus={{ boxShadow: "none" }}>
+      <Flex
+        align="center"
+        p="2"
+        mx="4"
+        my="2"
+        borderRadius="lg"
+        role="group"
+        cursor="pointer"
+        _hover={{
+          bg: !isActive && "gray.700",
+          color: !isActive && "white",
+        }}
+        {...(isActive && {
+          bg: "yellow.500",
+          color: "gray.900",
+        })}
+        {...rest}
+      >
+        {icon && (
+          <Icon
+            mr="4"
+            fontSize="16"
+            _groupHover={{
+              color: !isActive && "white",
+            }}
+            as={icon}
+          />
+        )}
+        {children}
+      </Flex>
+    </Link>
   );
 };
 

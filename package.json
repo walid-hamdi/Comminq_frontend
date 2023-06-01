@@ -1,6 +1,7 @@
 {
   "name": "frontend",
   "version": "0.1.0",
+  "proxy": "https://comminq-backend.onrender.com",
   "private": true,
   "scripts": {
     "dev": "next dev",

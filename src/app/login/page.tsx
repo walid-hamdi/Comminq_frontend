@@ -29,7 +29,6 @@ interface LoginFormValues {
 
 export default function Login() {
   const router = useRouter();
-  const [isLoading, setLoading] = useState(false);
   const toast = useToast();
 
   const formik = useFormik<LoginFormValues>({
@@ -51,40 +50,76 @@ export default function Login() {
       return errors;
     },
     onSubmit: async (values) => {
-      try {
-        setLoading(true);
-        const response = await axios.post(
+      axios
+        .post(
           "https://comminq-backend.onrender.com/api/user/login",
           {
             email: values.email,
             password: values.password,
+          },
+          { withCredentials: true } // Set withCredentials to true to enable sending cookies
+        )
+        .then((response) => {
+          const token = response.data.token;
+
+          // Set the token as an HTTP-only cookie
+          Cookies.set("comminq_auth_token", token, {
+            secure: true,
+            sameSite: "lax",
+          });
+
+          router.replace("/");
+        })
+        .catch((error) => {
+          let errorMessage = "An error occurred during login.";
+          console.log("ERRRRORRR:", error);
+          if (
+            error.response &&
+            error.response.data &&
+            error.response.data.error
+          ) {
+            errorMessage = error.response.data.error;
           }
-        );
-
-        const token = response.data.token;
-
-        Cookies.set("comminq_auth_token", token);
-        setLoading(false); // End loading state
-        router.replace("/");
-      } catch (error: any) {
-        let errorMessage = "An error occurred during login.";
-
-        if (
-          error.response &&
-          error.response.data &&
-          error.response.data.error
-        ) {
-          errorMessage = error.response.data.error;
-        }
-        toast({
-          title: "Error",
-          description: errorMessage,
-          status: "error",
-          duration: 3000,
-          isClosable: true,
+          toast({
+            title: "Error",
+            description: errorMessage,
+            status: "error",
+            duration: 3000,
+            isClosable: true,
+          });
         });
-        setLoading(false); // End loading state
-      }
+
+      // try {
+      //   const response = await axios.post(
+      //     "https://comminq-backend.onrender.com/api/user/login",
+      //     {
+      //       email: values.email,
+      //       password: values.password,
+      //     }
+      //   );
+
+      //   const token = response.data.token;
+
+      //   Cookies.set("comminq_auth_token", token);
+      //   router.replace("/");
+      // } catch (error: any) {
+      //   let errorMessage = "An error occurred during login.";
+
+      //   if (
+      //     error.response &&
+      //     error.response.data &&
+      //     error.response.data.error
+      //   ) {
+      //     errorMessage = error.response.data.error;
+      //   }
+      //   toast({
+      //     title: "Error",
+      //     description: errorMessage,
+      //     status: "error",
+      //     duration: 3000,
+      //     isClosable: true,
+      //   });
+      // }
     },
   });
 
