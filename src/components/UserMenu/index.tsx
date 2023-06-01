@@ -58,14 +58,14 @@ export default function UserMenu() {
   };
 
   useEffect(() => {
-    const token = Cookies.get("comminq_auth_token");
+    // const token = Cookies.get("comminq_auth_token");
 
     setLoading(true);
     axios
       .get("https://comminq-backend.onrender.com/api/user/profile", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        // headers: {
+        //   Authorization: `Bearer ${token}`,
+        // },
       })
       .then((response) => {
         const { name, picture } = response.data;

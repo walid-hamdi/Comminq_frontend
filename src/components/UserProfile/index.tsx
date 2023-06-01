@@ -42,13 +42,13 @@ const UserProfile = ({ isOpen, onClose }: UserProfileProps) => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const token = Cookies.get("comminq_auth_token");
+    // const token = Cookies.get("comminq_auth_token");
 
     axios
       .get("https://comminq-backend.onrender.com/api/user/profile", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        // headers: {
+        //   Authorization: `Bearer ${token}`,
+        // },
       })
       .then((response) => {
         setUserProfile(response.data);
