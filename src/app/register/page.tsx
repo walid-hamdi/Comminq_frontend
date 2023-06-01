@@ -76,14 +76,6 @@ export default function Register() {
           { withCredentials: true } // Set withCredentials to true to enable sending cookies
         );
 
-        const token = response.data.token;
-
-        // Set the token as an HTTP-only cookie
-        Cookies.set("comminq_auth_token", token, {
-          secure: true,
-          sameSite: "lax",
-        });
-
         router.replace("/");
       } catch (error: any) {
         let errorMessage = "An error occurred during register.";
