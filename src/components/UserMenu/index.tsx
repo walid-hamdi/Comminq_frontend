@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import {
   Button,
   Flex,
@@ -14,23 +14,24 @@ import {
   AvatarBadge,
   HStack,
   Spinner,
-  Center,
   useDisclosure,
+  useToast,
 } from "@chakra-ui/react";
 import { FiUser, FiLogOut, FiMoreHorizontal, FiEdit } from "react-icons/fi";
 import { googleLogout } from "@react-oauth/google";
-import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
-import axios from "axios";
-import UserProfileEdit from "../UserProfileEdit";
 import UserProfile from "../UserProfile";
+import useProfile from "@/hooks/useProfile";
+import UserProfileEdit from "../UserProfileEdit";
+import { CanceledError } from "axios";
 
 export default function UserMenu() {
   const [isOpen, setIsOpen] = useState(false);
-  const [avatar, setAvatar] = useState("");
-  const [username, setUsername] = useState("");
-  const [loading, setLoading] = useState(true);
+  const { profile, error, isLoading } = useProfile();
+  const toast = useToast();
+
   const router = useRouter();
+
   const {
     isOpen: isUserProfileOpen,
     onOpen: openUserProfile,
@@ -46,10 +47,30 @@ export default function UserMenu() {
     setIsOpen(!isOpen);
   };
 
-  const handleMenuItemClick = (item: string) => {
+  const handleMenuItemClick = async (item: string) => {
     if (item === "Logout") {
-      router.push("/login");
-      Cookies.remove("comminq_auth_token");
+      // try {
+      //   await logout();
+      //   router.replace("/login");
+      // } catch (error: any) {
+      //   let errorMessage = "An error occurred during logout.";
+      //   if (error instanceof CanceledError) return;
+      //   if (
+      //     error.response &&
+      //     error.response.data &&
+      //     error.response.data.error
+      //   ) {
+      //     errorMessage = error.response.data.error;
+      //   }
+      //   toast({
+      //     title: "Error",
+      //     description: errorMessage,
+      //     status: "error",
+      //     duration: 3000,
+      //     isClosable: true,
+      //   });
+      // }
+
       googleLogout();
     }
     if (item === "Profile") openUserProfile();
@@ -57,23 +78,7 @@ export default function UserMenu() {
     if (item === "Edit") openUserProfileEdit();
   };
 
-  useEffect(() => {
-    setLoading(true);
-    axios
-      .get("https://comminq-backend.onrender.com/api/user/profile", {
-        withCredentials: true,
-      })
-      .then((response) => {
-        const { name, picture } = response.data;
-        setUsername(name);
-        setAvatar(picture);
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.error(error);
-        setLoading(false);
-      });
-  }, []);
+  const { name, picture } = profile || {};
 
   return (
     <>
@@ -95,15 +100,15 @@ export default function UserMenu() {
           px="4"
         >
           <Flex align="center" justifyContent="center" borderRadius="md">
-            {loading ? (
+            {isLoading ? (
               <Spinner size="sm" />
             ) : (
               <>
-                <Avatar size="sm" name={username} src={avatar}>
+                <Avatar size="sm" name={name} src={picture}>
                   <AvatarBadge boxSize="1em" bg="green.500" />
                 </Avatar>
                 <Text fontSize="sm" ml="3">
-                  {username}
+                  {name}
                 </Text>
                 <Spacer />
                 <Box as={FiMoreHorizontal} size="20px" color="gray.500" />

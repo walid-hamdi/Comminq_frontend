@@ -1,6 +1,6 @@
 "use client";
-import NextLink from "next/link";
 import { useFormik } from "formik";
+import NextLink from "next/link";
 import {
   Flex,
   Box,
@@ -18,20 +18,48 @@ import {
 } from "@chakra-ui/react";
 import GoogleButton from "../../components/GoogleAuthButton";
 import { useRouter } from "next/navigation";
-import Cookies from "js-cookie";
-import axios from "axios";
-import { useState } from "react";
-
-interface RegisterFormValues {
-  name: string;
-  email: string;
-  password: string;
-  confirmPassword: string;
-}
+import {
+  RegisterFormValues,
+  validateRegisterForm,
+} from "@/utils/formValidations";
+import userService from "@/services/userService";
 
 export default function Register() {
   const router = useRouter();
   const toast = useToast();
+
+  const handleSubmit = async (
+    values: RegisterFormValues,
+    setSubmitting: (isSubmitting: boolean) => void
+  ) => {
+    try {
+      await userService.register({
+        name: values.name,
+        email: values.email,
+        password: values.password,
+      });
+      router.replace("/");
+    } catch (error) {
+      handleLoginError(error);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  // handleError
+  const handleLoginError = (error: any) => {
+    let errorMessage = "An error occurred during register.";
+    if (error.response && error.response.data && error.response.data.error)
+      errorMessage = error.response.data.error;
+
+    toast({
+      title: "Error",
+      description: errorMessage,
+      status: "error",
+      duration: 3000,
+      isClosable: true,
+    });
+  };
 
   const formik = useFormik<RegisterFormValues>({
     initialValues: {
@@ -40,62 +68,9 @@ export default function Register() {
       password: "",
       confirmPassword: "",
     },
-    validate: (values) => {
-      const errors: Partial<RegisterFormValues> = {};
-
-      if (!values.name) {
-        errors.name = "Name is required";
-      }
-      if (!values.email) {
-        errors.email = "Email is required";
-      }
-
-      if (!values.password) {
-        errors.password = "Password is required";
-      }
-      if (!values.confirmPassword) {
-        errors.password = "Confirm password is required";
-      }
-
-      if (values.password !== values.confirmPassword) {
-        errors.confirmPassword = "Passwords must match";
-      }
-
-      return errors;
-    },
-
-    onSubmit: async (values) => {
-      try {
-        const response = await axios.post(
-          "https://comminq-backend.onrender.com/api/user/register",
-          {
-            name: values.name,
-            email: values.email,
-            password: values.password,
-          },
-          { withCredentials: true } // Set withCredentials to true to enable sending cookies
-        );
-
-        router.replace("/");
-      } catch (error: any) {
-        let errorMessage = "An error occurred during register.";
-
-        if (
-          error.response &&
-          error.response.data &&
-          error.response.data.error
-        ) {
-          errorMessage = error.response.data.error;
-        }
-        toast({
-          title: "Error",
-          description: errorMessage,
-          status: "error",
-          duration: 3000,
-          isClosable: true,
-        });
-      }
-    },
+    validate: validateRegisterForm,
+    onSubmit: (values, { setSubmitting }) =>
+      handleSubmit(values, setSubmitting),
   });
 
   return (

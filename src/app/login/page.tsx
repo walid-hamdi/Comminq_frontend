@@ -1,7 +1,7 @@
 "use client";
 import { useFormik } from "formik";
-import axios from "axios";
 import NextLink from "next/link";
+import { useRouter } from "next/navigation";
 import {
   Flex,
   Box,
@@ -17,69 +17,50 @@ import {
   FormErrorMessage,
   useToast,
 } from "@chakra-ui/react";
-import GoogleButton from "../../components/GoogleAuthButton";
-import Cookies from "js-cookie";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-
-interface LoginFormValues {
-  email: string;
-  password: string;
-}
+import GoogleButton from "@/components/GoogleAuthButton";
+import userService from "../../services/userService";
+import { LoginFormValues, validateLoginForm } from "@/utils/formValidations";
 
 export default function Login() {
   const router = useRouter();
   const toast = useToast();
+
+  const handleSubmit = async (
+    values: LoginFormValues,
+    setSubmitting: (isSubmitting: boolean) => void
+  ) => {
+    try {
+      await userService.login(values);
+      router.replace("/");
+    } catch (error) {
+      handleLoginError(error);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+  // handleError
+  const handleLoginError = (error: any) => {
+    let errorMessage = "An error occurred during login.";
+    if (error.response && error.response.data && error.response.data.error)
+      errorMessage = error.response.data.error;
+
+    toast({
+      title: "Error",
+      description: errorMessage,
+      status: "error",
+      duration: 3000,
+      isClosable: true,
+    });
+  };
 
   const formik = useFormik<LoginFormValues>({
     initialValues: {
       email: "",
       password: "",
     },
-    validate: (values) => {
-      const errors: Partial<LoginFormValues> = {};
-
-      if (!values.email) {
-        errors.email = "Email is required";
-      }
-
-      if (!values.password) {
-        errors.password = "Password is required";
-      }
-
-      return errors;
-    },
-    onSubmit: async (values) => {
-      axios
-        .post(
-          "https://comminq-backend.onrender.com/api/user/login",
-          {
-            email: values.email,
-            password: values.password,
-          },
-          { withCredentials: true } // Set withCredentials to true to enable sending cookies
-        )
-        .then((response) => {
-          router.replace("/");
-        })
-        .catch((error) => {
-          let errorMessage = "An error occurred during login.";
-          if (
-            error.response &&
-            error.response.data &&
-            error.response.data.error
-          ) {
-            errorMessage = error.response.data.error;
-          }
-          toast({
-            title: "Error",
-            description: errorMessage,
-            status: "error",
-            duration: 3000,
-            isClosable: true,
-          });
-        });
-    },
+    validate: validateLoginForm,
+    onSubmit: (values, { setSubmitting }) =>
+      handleSubmit(values, setSubmitting),
   });
 
   return (
@@ -101,13 +82,7 @@ export default function Login() {
           boxShadow={"lg"}
           p={8}
         >
-          <form
-            method="post" // Specify the method as "post"
-            onSubmit={(e) => {
-              e.preventDefault(); // Prevent default form submission
-              formik.handleSubmit(); // Manually handle form submission
-            }}
-          >
+          <form onSubmit={formik.handleSubmit}>
             <Stack spacing={4}>
               <FormControl
                 id="email"
@@ -160,7 +135,6 @@ export default function Login() {
                 >
                   Sign in
                 </Button>
-
                 <GoogleButton />
               </Stack>
             </Stack>

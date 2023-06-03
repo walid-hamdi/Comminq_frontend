@@ -1,23 +1,23 @@
-import defaultGet from "@/services/httpService";
+import userService, { ResponseProfile } from "@/services/userService";
 import { CanceledError } from "axios";
 import { useEffect, useState } from "react";
 
-const useDefault = () => {
-  const [msg, setMsg] = useState<String>("");
+const useProfile = () => {
+  const [profile, setProfile] = useState<ResponseProfile | null>(null);
   const [error, setError] = useState<string>();
   const [isLoading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
     setLoading(true);
-    const { request, cancel } = defaultGet();
+    const { request, cancel } = userService.profile();
 
     request
       .then((res) => {
-        setMsg(res.data.msg);
+        setProfile(res.data);
         setLoading(false);
       })
       .catch((err) => {
-        if (err instanceof CanceledError) return;
+        // if (err instanceof CanceledError) return;
         setError(err.message);
         setLoading(false);
       });
@@ -25,7 +25,7 @@ const useDefault = () => {
     return () => cancel();
   }, []);
 
-  return { msg, error, isLoading };
+  return { profile, error, isLoading };
 };
 
-export default useDefault;
+export default useProfile;

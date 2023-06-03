@@ -1,9 +1,13 @@
 import axios, { CanceledError } from "axios";
 
-const apiClient = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_ENDPOINT,
+const mainApiClient = axios.create({
+  baseURL: process.env.NEXT_PUBLIC_ENDPOINT, // Main API base URL
+});
+
+const googleApiClient = axios.create({
+  baseURL: "https://www.googleapis.com/oauth2/v1", // Google API base URL
 });
 
 export { CanceledError };
 
-export default apiClient;
+export { mainApiClient, googleApiClient };
