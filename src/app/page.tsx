@@ -1,3 +1,17 @@
+// Google Auth
+// Profile
+// Logout
+// Update profile
+// Forgot password
+// Verify email (after register) /
+// prevent anyone to enter if he didn't verify his email
+// protect routes
+// add state management
+
+// user can create room
+// involve to activities
+// communication
+
 "use client";
 import Sidebar from "@/components/Sidebar";
 import {
