@@ -1,4 +1,4 @@
-import { mainApiClient, googleApiClient } from "./apiClient";
+import { apiClient } from "./apiClient";
 
 class HttpService<TProfile, TAuth> {
   private endpoint: string;
@@ -9,53 +9,49 @@ class HttpService<TProfile, TAuth> {
     this.controller = new AbortController();
   }
 
-  profile() {
-    const request = mainApiClient.get<TProfile>(`${this.endpoint}/profile`, {
-      signal: this.controller.signal,
-      withCredentials: true,
-    });
-
-    return {
-      request,
-      cancel: () => this.controller.abort(),
-    };
-  }
-
-  async login(data: any) {
-    return await mainApiClient.post<TAuth>(`${this.endpoint}/login`, data, {
-      withCredentials: true,
-    });
-  }
-
-  async getGoogleUserInfo(access_token: string) {
-    return await googleApiClient.get<TProfile>("/", {
-      params: {
-        access_token: access_token,
-      },
-    });
-  }
-
-  // save if the info coming from google auth user new or login otherwise
-  async userGoogleLogin(data: any) {
-    return await mainApiClient.post<TAuth>(
-      `${this.endpoint}/google-login`,
-      data,
+  async profile() {
+    return await apiClient.get<TProfile>(
+      `${this.endpoint}/profile`,
+      // "http://localhost:4000/api/user/profile",
       {
         withCredentials: true,
       }
     );
   }
 
+  async login(data: any) {
+    return await apiClient.post<TAuth>(`${this.endpoint}/login`, data, {
+      withCredentials: true,
+    });
+  }
+
+  async googleLogin(access_token: string) {
+    const config = {
+      withCredentials: true,
+    };
+
+    return await apiClient.post<TAuth>(
+      `${this.endpoint}/google-login`,
+      // "http://localhost:4000/api/user/google-login",
+      { access_token },
+      config
+    );
+  }
+
   async register(data: any) {
-    return await mainApiClient.post<TAuth>(`${this.endpoint}/register`, data, {
+    return await apiClient.post<TAuth>(`${this.endpoint}/register`, data, {
       withCredentials: true,
     });
   }
 
   async logout() {
-    return await mainApiClient.get(`${this.endpoint}/logout`, {
-      withCredentials: true,
-    });
+    return await apiClient.get(
+      `${this.endpoint}/logout`,
+      // "http://localhost:4000/api/user/logout",
+      {
+        withCredentials: true,
+      }
+    );
   }
 }
 

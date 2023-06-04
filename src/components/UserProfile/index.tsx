@@ -22,7 +22,7 @@ interface UserProfileProps {
 }
 
 const UserProfile = ({ isOpen, onClose }: UserProfileProps) => {
-  const { profile, error, isLoading } = useProfile();
+  const { profile, error, loading } = useProfile();
 
   const renderContent = () => {
     if (error) {
@@ -36,7 +36,7 @@ const UserProfile = ({ isOpen, onClose }: UserProfileProps) => {
       );
     }
 
-    if (isLoading || !profile) {
+    if (loading || !profile) {
       return (
         <Flex justify="center" align="center">
           <Alert status="info" variant="left-accent">

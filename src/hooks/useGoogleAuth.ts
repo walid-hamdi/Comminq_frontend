@@ -1,50 +1,69 @@
+import { useToast } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { useGoogleLogin } from "@react-oauth/google";
 import userService from "@/services/userService";
+import { useRouter } from "next/navigation";
+import { logError, logResult } from "@/utils/debugUtils";
 
-const useGoogleAuth = () => {
-  const [userAccessToken, setUserAccessToken] = useState<string>("");
+export const useGoogleAuth = () => {
   const [isLoading, setLoading] = useState(false);
-  const [error, setError] = useState<string>();
-  const [userData, setUserData] = useState<any>();
-
-  useGoogleLogin({
-    onSuccess: (codeResponse) => {
-      if (codeResponse && codeResponse.access_token)
-        setUserAccessToken(codeResponse.access_token);
-    },
-    onError: (error: any) => {
-      setError("An Error occurred during login");
-    },
-  });
+  const router = useRouter();
+  const toast = useToast();
+  const [accessToken, setAccessToken] = useState<string>();
 
   useEffect(() => {
-    if (userAccessToken) {
+    if (accessToken) {
       setLoading(true);
       userService
-        .getGoogleUserInfo(userAccessToken)
-        .then((response) => {
-          setUserData(response.data);
-          setError(undefined);
+        .googleLogin(accessToken)
+        .then(() => {
+          router.replace("/");
         })
         .catch((error) => {
-          let errorMessage = "An error occurred during login.";
+          let errorMessage = "An error occurred during login";
           if (
             error.response &&
             error.response.data &&
             error.response.data.error
-          )
+          ) {
             errorMessage = error.response.data.error;
-
-          setError(errorMessage);
+          }
+          toast({
+            title: "Login Failed",
+            description: errorMessage,
+            status: "error",
+            duration: 3000,
+            isClosable: true,
+          });
         })
         .finally(() => {
           setLoading(false);
         });
     }
-  }, [userAccessToken, userData]);
+  }, [accessToken, router, toast]);
 
-  return { userData, isLoading, error };
+  const googleLogin = useGoogleLogin({
+    onSuccess: (codeResponse: any) => {
+      if (codeResponse && codeResponse.access_token) {
+        logResult(`Access Token: ${codeResponse.access_token}`);
+        setAccessToken(codeResponse.access_token);
+      }
+    },
+    onError: (error: any) => {
+      let errorMessage = "An error occurred during login";
+      if (error.response && error.response.data && error.response.data.error) {
+        errorMessage = error.response.data.error;
+      }
+      toast({
+        title: "Login Failed",
+        description: errorMessage,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+      logError(errorMessage);
+    },
+  });
+
+  return { googleLogin, isLoading };
 };
-
-export default useGoogleAuth;
