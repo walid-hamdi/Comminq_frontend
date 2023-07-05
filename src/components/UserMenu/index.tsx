@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Button,
   Flex,
@@ -19,17 +19,25 @@ import {
   Alert,
   AlertIcon,
 } from "@chakra-ui/react";
-import { FiUser, FiLogOut, FiMoreHorizontal, FiEdit } from "react-icons/fi";
+import {
+  FiUser,
+  FiLogOut,
+  FiUnlock,
+  FiMoreHorizontal,
+  FiEdit,
+  FiTrash2,
+} from "react-icons/fi";
 import { googleLogout } from "@react-oauth/google";
 import { useRouter } from "next/navigation";
 import UserProfile from "../UserProfile";
-import UserProfileEdit from "../UserProfileEdit";
 import useProfile from "@/hooks/useProfile";
-import userService from "@/services/userService";
+import UserDeleteAccount from "../UserDeleteAccount";
+import UserChangePassword from "../UserChangePassword";
+import UserProfileEdit from "../UserProfileEdit";
 
 export default function UserMenu() {
   const [isOpen, setIsOpen] = useState(false);
-  const { profile, error, loading } = useProfile();
+  const { profile, error, loading, refetchProfile } = useProfile();
   const toast = useToast();
   const router = useRouter();
 
@@ -43,16 +51,38 @@ export default function UserMenu() {
     onOpen: openUserProfileEdit,
     onClose: closeUserProfileEdit,
   } = useDisclosure();
+  const {
+    isOpen: isUserDeleteAccount,
+    onOpen: openUserDeleteAccount,
+    onClose: closeUserDeleteAccount,
+  } = useDisclosure();
+
+  const {
+    isOpen: isUserChangePasswordOpen,
+    onOpen: openUserChangePassword,
+    onClose: closeUserChangePassword,
+  } = useDisclosure();
 
   const handleMenuClick = () => {
     setIsOpen(!isOpen);
   };
 
   const handleMenuItemClick = async (item: string) => {
+    if (item === "Profile") openUserProfile();
+
+    if (item === "Edit") openUserProfileEdit();
+
+    if (item === "Change password") openUserChangePassword();
+
+    if (item === "Delete") {
+      openUserDeleteAccount();
+    }
     if (item === "Logout") {
       try {
-        await userService.logout();
+        // await userService.logout();
+        localStorage.removeItem("comminq-token");
         router.replace("/login");
+        googleLogout();
       } catch (error: any) {
         let errorMessage = "An error occurred during logout.";
         toast({
@@ -63,12 +93,14 @@ export default function UserMenu() {
           isClosable: true,
         });
       }
-      googleLogout();
     }
-    if (item === "Profile") openUserProfile();
-
-    if (item === "Edit") openUserProfileEdit();
   };
+
+  useEffect(() => {
+    if (isUserProfileEditOpen) {
+      refetchProfile(); // Fetch the updated profile after closing the edit modal
+    }
+  }, [isUserProfileEditOpen, refetchProfile]);
 
   return (
     <>
@@ -90,7 +122,7 @@ export default function UserMenu() {
               transform="translate(-50%, -50%)"
             />
           )}
-          {profile && (
+          {profile && profile.id && (
             <MenuButton
               as={Button}
               variant="unstyled"
@@ -101,15 +133,19 @@ export default function UserMenu() {
               }}
               px="4"
             >
-              <Flex align="center" borderRadius="md">
+              <Flex
+                align="center"
+                justifyContent="space-around"
+                borderRadius="md"
+              >
                 <>
                   <Avatar size="sm" name={profile.name} src={profile.picture}>
                     <AvatarBadge boxSize="1em" bg="green.500" />
                   </Avatar>
-                  <Text fontSize="sm" ml="3">
+                  <Text fontSize="sm" mx="3">
                     {profile.name}
                   </Text>
-                  <Spacer />
+
                   <Box as={FiMoreHorizontal} size="20px" color="gray.500" />
                 </>
               </Flex>
@@ -126,7 +162,20 @@ export default function UserMenu() {
           <MenuItem onClick={() => handleMenuItemClick("Edit")}>
             <HStack spacing="2">
               <Box as={FiEdit} size="18px" />
-              <Text>Edit</Text>
+              <Text>Update profile</Text>
+            </HStack>
+          </MenuItem>
+          <MenuItem onClick={() => handleMenuItemClick("Change password")}>
+            <HStack spacing="2">
+              <Box as={FiUnlock} size="18px" />
+              <Text>Change password</Text>
+            </HStack>
+          </MenuItem>
+
+          <MenuItem onClick={() => handleMenuItemClick("Delete")}>
+            <HStack spacing="2">
+              <Box as={FiTrash2} size="18px" />
+              <Text>Delete account</Text>
             </HStack>
           </MenuItem>
           <MenuItem onClick={() => handleMenuItemClick("Logout")}>
@@ -137,10 +186,27 @@ export default function UserMenu() {
           </MenuItem>
         </MenuList>
       </Menu>
-      <UserProfile isOpen={isUserProfileOpen} onClose={closeUserProfile} />
+      <UserProfile
+        isOpen={isUserProfileOpen}
+        onClose={closeUserProfile}
+        initialProfile={profile}
+      />
+
       <UserProfileEdit
+        userId={profile.id}
         isOpen={isUserProfileEditOpen}
         onClose={closeUserProfileEdit}
+        initialProfile={profile}
+      />
+      <UserChangePassword
+        userId={profile.id}
+        isOpen={isUserChangePasswordOpen}
+        onClose={closeUserChangePassword}
+      />
+      <UserDeleteAccount
+        isOpen={isUserDeleteAccount}
+        onClose={closeUserDeleteAccount}
+        userId={profile.id}
       />
     </>
   );

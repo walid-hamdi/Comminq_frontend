@@ -14,29 +14,57 @@ import {
   ModalCloseButton,
   ModalBody,
 } from "@chakra-ui/react";
-import useProfile from "@/hooks/useProfile";
+// import useProfile from "@/hooks/useProfile";
+import { logResult } from "@/utils/debugUtils";
+
+interface Profile {
+  id: string;
+  name: string;
+  picture: string;
+  email: string;
+  password: string;
+}
 
 interface UserProfileProps {
   isOpen: boolean;
   onClose: () => void;
+  initialProfile: Profile;
 }
 
-const UserProfile = ({ isOpen, onClose }: UserProfileProps) => {
-  const { profile, error, loading } = useProfile();
+const UserProfile = ({
+  isOpen,
+  onClose,
+  initialProfile: profile,
+}: UserProfileProps) => {
+  // const { profile, error, loading } = useProfile();
 
   const renderContent = () => {
-    if (error) {
-      return (
-        <Flex justify="center" align="center">
-          <Alert status="error" variant="left-accent">
-            <AlertIcon />
-            Error: {error}
-          </Alert>
-        </Flex>
-      );
+    {
+      logResult(`PROFILE ${profile}`);
+      console.log(`PROFILE ${profile}`);
     }
+    // if (error) {
+    //   return (
+    //     <Flex justify="center" align="center">
+    //       <Alert status="error" variant="left-accent">
+    //         <AlertIcon />
+    //         Error: {error}
+    //       </Alert>
+    //     </Flex>
+    //   );
+    // }
 
-    if (loading || !profile) {
+    // if (loading || !profile) {
+    //   return (
+    //     <Flex justify="center" align="center">
+    //       <Alert status="info" variant="left-accent">
+    //         <AlertIcon />
+    //         Loading user profile...
+    //       </Alert>
+    //     </Flex>
+    //   );
+    // }
+    if (!profile) {
       return (
         <Flex justify="center" align="center">
           <Alert status="info" variant="left-accent">
@@ -53,12 +81,12 @@ const UserProfile = ({ isOpen, onClose }: UserProfileProps) => {
       <Box
         mb={4}
         w={"full"}
-        bg={"white"}
+        // bg={"white"}
         boxShadow={"2xl"}
         rounded={"md"}
         overflow={"hidden"}
       >
-        <Flex justify={"center"} mt={-12}>
+        <Flex justify={"center"}>
           <Avatar
             size={"xl"}
             src={picture}

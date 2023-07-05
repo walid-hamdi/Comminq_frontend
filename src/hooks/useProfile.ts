@@ -1,33 +1,46 @@
-import userService from "@/services/userService";
+import userService, { ResponseProfile } from "@/services/userService";
 import { logError, logResult } from "@/utils/debugUtils";
+import { AxiosResponse } from "axios";
 import { useEffect, useState } from "react";
 
 interface Profile {
+  id: string;
   name: string;
   picture: string;
   email: string;
   password: string;
 }
 
-interface ProfileResponse {
-  data: Profile;
-}
-
 interface ErrorResponse {
   error: string;
 }
 
+const defaultProfile: Profile = {
+  id: "",
+  name: "",
+  picture: "",
+  email: "",
+  password: "",
+};
+
 const useProfile = () => {
   const [loading, setLoading] = useState<boolean>(true);
-  const [profile, setProfile] = useState<Profile | null>(null);
+  const [profile, setProfile] = useState<Profile>(defaultProfile);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
+  const fetchProfile = () => {
     setLoading(true);
     userService
       .profile()
-      .then((res: ProfileResponse) => {
-        setProfile(res?.data);
+      .then((res: AxiosResponse<ResponseProfile>) => {
+        const mappedProfile: Profile = {
+          id: res.data._id, // Map _id to id
+          name: res.data.name,
+          picture: res.data.picture,
+          email: res.data.email,
+          password: res.data.password,
+        };
+        setProfile(mappedProfile);
         logResult(res?.data);
       })
       .catch((error: any) => {
@@ -45,9 +58,17 @@ const useProfile = () => {
       .finally(() => {
         setLoading(false);
       });
+  };
+
+  useEffect(() => {
+    fetchProfile();
   }, []);
 
-  return { profile, loading, error };
+  const refetchProfile = () => {
+    fetchProfile();
+  };
+
+  return { profile, loading, error, refetchProfile };
 };
 
 export default useProfile;
