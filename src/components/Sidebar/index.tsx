@@ -16,7 +16,7 @@ import {
   Spacer,
 } from "@chakra-ui/react";
 import { FiMenu } from "react-icons/fi";
-import { FaHome, FaChartLine, FaEnvelope } from "react-icons/fa";
+import { FaHome } from "react-icons/fa";
 
 import { IconType } from "react-icons";
 import Image from "next/image";

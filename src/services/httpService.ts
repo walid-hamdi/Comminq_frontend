@@ -11,18 +11,22 @@ class HttpService<TProfile, TAuth> {
 
   async profile() {
     return await apiClient.get<TProfile>(
-      `${this.endpoint}/profile`,
+      `${this.endpoint}/profile`
       // "http://localhost:4000/api/user/profile",
-      {
-        withCredentials: true,
-      }
+      // {
+      //   withCredentials: true,
+      // }
     );
   }
 
   async login(data: any) {
-    return await apiClient.post<TAuth>(`${this.endpoint}/login`, data, {
-      withCredentials: true,
-    });
+    return await apiClient.post<TAuth>(
+      `${this.endpoint}/login`,
+      data
+      // {
+      //   withCredentials: true,
+      // }
+    );
   }
 
   async googleLogin(access_token: string) {
@@ -33,25 +37,81 @@ class HttpService<TProfile, TAuth> {
     return await apiClient.post<TAuth>(
       `${this.endpoint}/google-login`,
       // "http://localhost:4000/api/user/google-login",
-      { access_token },
-      config
+      { access_token }
+      // config
     );
   }
 
   async register(data: any) {
     return await apiClient.post<TAuth>(`${this.endpoint}/register`, data, {
-      withCredentials: true,
+      // withCredentials: true,
     });
   }
 
   async logout() {
     return await apiClient.get(
-      `${this.endpoint}/logout`,
+      `${this.endpoint}/logout`
       // "http://localhost:4000/api/user/logout",
-      {
-        withCredentials: true,
-      }
+      // {
+      //   withCredentials: true,
+      // }
     );
+  }
+
+  async updateProfile(id: string, data: any, profilePicture: File | null) {
+    const formData = new FormData();
+    formData.append("data", JSON.stringify(data));
+
+    if (profilePicture) {
+      formData.append("profile_picture", profilePicture);
+    }
+
+    return await apiClient.patch<TProfile>(`${this.endpoint}/${id}`, formData);
+  }
+
+  async deleteProfile(id: string) {
+    return await apiClient.delete(`${this.endpoint}/${id}`, {
+      withCredentials: true,
+    });
+  }
+
+  async verifyEmail(token: string) {
+    return await apiClient.get(`${this.endpoint}/verify-email/${token}`);
+  }
+
+  async resendVerificationEmail(email: string) {
+    return await apiClient.post(`${this.endpoint}/resend-verification-email`, {
+      email,
+    });
+  }
+
+  async forgotPassword(email: string) {
+    return await apiClient.post(`${this.endpoint}/forgot-password`, { email });
+  }
+
+  async verifyCode(email: string, code: string) {
+    return await apiClient.post(`${this.endpoint}/verify-code`, {
+      email,
+      code,
+    });
+  }
+
+  async changePasswordByCode(code: string, newPassword: string) {
+    return await apiClient.post(`${this.endpoint}/password/reset`, {
+      code,
+      newPassword,
+    });
+  }
+
+  async changePassword(
+    id: string,
+    currentPassword: string,
+    newPassword: string
+  ) {
+    return await apiClient.put(`${this.endpoint}/${id}/password`, {
+      currentPassword,
+      newPassword,
+    });
   }
 }
 

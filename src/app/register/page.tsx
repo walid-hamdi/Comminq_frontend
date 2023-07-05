@@ -33,12 +33,18 @@ export default function Register() {
     setSubmitting: (isSubmitting: boolean) => void
   ) => {
     try {
-      await userService.register({
+      const response = await userService.register({
         name: values.name,
         email: values.email,
         password: values.password,
       });
-      router.replace("/");
+
+      if (response.data && response.data.token) {
+        localStorage.setItem("comminq-token", response.data.token);
+        router.replace("/");
+      } else {
+        handleLoginError({ response: { data: { error: "Token not found" } } });
+      }
     } catch (error) {
       handleLoginError(error);
     } finally {

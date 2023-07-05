@@ -1,16 +1,19 @@
-// Google Auth
-// Profile
-// Logout
-// Update profile
-// Forgot password
-// Verify email (after register) /
-// prevent anyone to enter if he didn't verify his email
-// protect routes
-// add state management
+/*
+Handle updating (
+   when no changes no to call the server
+   when the picture updating it show a loading in the avatar
+   when the email is not in use we should set the isVerified to false and update
+   when change the picture it will replace the existing one in the storage
+  ) 
+ 
+ Remove profile picture  
+ Handle forgot password
+ Handle verification account
+ Handle protected routes
+ Change to use http only cookie instead
+ Use state management
 
-// user can create room
-// involve to activities
-// communication
+*/
 
 "use client";
 import Sidebar from "@/components/Sidebar";

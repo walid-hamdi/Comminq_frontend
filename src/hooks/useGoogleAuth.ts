@@ -16,8 +16,11 @@ export const useGoogleAuth = () => {
       setLoading(true);
       userService
         .googleLogin(accessToken)
-        .then(() => {
-          router.replace("/");
+        .then((response) => {
+          if (response.data && response.data.token) {
+            localStorage.setItem("comminq-token", response.data.token);
+            router.replace("/");
+          }
         })
         .catch((error) => {
           let errorMessage = "An error occurred during login";
