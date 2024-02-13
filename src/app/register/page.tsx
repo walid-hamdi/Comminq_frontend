@@ -1,30 +1,31 @@
 "use client";
-import { useFormik } from "formik";
-import NextLink from "next/link";
 import {
-  Flex,
   Box,
-  FormControl,
-  FormLabel,
-  Input,
-  Stack,
-  Link,
   Button,
+  Flex,
+  FormControl,
+  FormErrorMessage,
+  FormLabel,
   Heading,
+  Input,
+  Link,
+  Stack,
   Text,
   useColorModeValue,
   useToast,
-  FormErrorMessage,
 } from "@chakra-ui/react";
-import GoogleButton from "../../components/GoogleAuthButton";
+import { useFormik } from "formik";
+import NextLink from "next/link";
 import { useRouter } from "next/navigation";
+import GoogleButton from "../components/GoogleAuthButton";
+import userService from "../services/userService";
 import {
   RegisterFormValues,
   validateRegisterForm,
-} from "@/utils/formValidations";
-import userService from "@/services/userService";
+} from "../utils/formValidations";
+import { logResult } from "../utils/debugUtils";
 
-export default function Register() {
+export default function RegisterPage() {
   const router = useRouter();
   const toast = useToast();
 
@@ -39,12 +40,10 @@ export default function Register() {
         password: values.password,
       });
 
-      if (response.data && response.data.token) {
-        localStorage.setItem("comminq-token", response.data.token);
-        router.replace("/");
-      } else {
-        handleLoginError({ response: { data: { error: "Token not found" } } });
-      }
+      const token = response.data.token;
+      logResult(`Response : ${token}`);
+      localStorage.setItem("token", token);
+      router.replace("/verify-email");
     } catch (error) {
       handleLoginError(error);
     } finally {
@@ -86,12 +85,10 @@ export default function Register() {
       justify={"center"}
       bg={useColorModeValue("gray.50", "gray.800")}
     >
-      <Stack spacing={8} mx={"auto"} maxW={"xl"} py={12} px={6}>
-        <Stack align={"center"}>
-          <Heading textAlign="center" fontSize={"3xl"}>
-            📝 Join the Comminq Community
-          </Heading>
-        </Stack>
+      <Stack spacing={8} mx={"auto"} w={"md"} py={12} px={6}>
+        <Heading textAlign="center" fontSize={"2xl"}>
+          📝 Join the Comminq Community
+        </Heading>
         <Box
           rounded={"lg"}
           bg={useColorModeValue("white", "gray.700")}
