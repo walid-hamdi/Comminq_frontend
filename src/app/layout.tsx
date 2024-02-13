@@ -1,45 +1,24 @@
-"use client";
-import { GoogleOAuthProvider } from "@react-oauth/google";
-import { ThemeProviders } from "./themes/themeProviders";
 import { Box } from "@chakra-ui/react";
-import ColorModeToggle from "@/components/SwitchMode";
-import { usePathname, useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { PropsWithChildren } from "react";
+import GoogleAuthProvider from "./GoogleAuthProvider";
+import ColorModeToggle from "./components/SwitchMode";
+import { ThemeProviders } from "./themes/themeProviders";
+import { Metadata } from "next";
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  const pathname = usePathname();
-  const router = useRouter();
+export const metadata: Metadata = {
+  title: "Comminq",
+  description: "Communication platform.",
+};
 
-  useEffect(() => {
-    const token = localStorage.getItem("comminq-token");
-    if (token) {
-      if (pathname === "/login" || pathname === "/register") {
-        router.replace("/");
-      }
-    } else {
-      if (pathname === "/register") {
-        return router.replace("/register");
-      }
-      router.replace("/login");
-    }
-  }, [pathname, router]);
-
+export default function RootLayout({ children }: PropsWithChildren) {
   return (
     <html lang="en">
       <head>
-        <title>Comminq</title>
-        <meta name="description" content="Comminq Communication Platform" />
         <link rel="icon" href="./favicon.ico" />
       </head>
       <body>
-        <ThemeProviders>
-          <GoogleOAuthProvider
-            clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID ?? ""}
-          >
+        <GoogleAuthProvider>
+          <ThemeProviders>
             <main>
               <Box
                 position="absolute"
@@ -50,8 +29,8 @@ export default function RootLayout({
               </Box>
               {children}
             </main>
-          </GoogleOAuthProvider>
-        </ThemeProviders>
+          </ThemeProviders>
+        </GoogleAuthProvider>
       </body>
     </html>
   );

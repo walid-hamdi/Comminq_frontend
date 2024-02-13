@@ -1,27 +1,29 @@
 "use client";
+import {
+  Box,
+  Button,
+  Flex,
+  FormControl,
+  FormErrorMessage,
+  FormLabel,
+  Heading,
+  Input,
+  Link,
+  Stack,
+  Text,
+  useColorModeValue,
+  useDisclosure,
+  useToast,
+} from "@chakra-ui/react";
 import { useFormik } from "formik";
 import NextLink from "next/link";
 import { useRouter } from "next/navigation";
-import {
-  Flex,
-  Box,
-  FormControl,
-  FormLabel,
-  Input,
-  Stack,
-  Link,
-  Button,
-  Heading,
-  Text,
-  useColorModeValue,
-  FormErrorMessage,
-  useToast,
-  useDisclosure,
-} from "@chakra-ui/react";
-import GoogleButton from "@/components/GoogleAuthButton";
-import userService from "../../services/userService";
-import { LoginFormValues, validateLoginForm } from "@/utils/formValidations";
-import ForgotPassword from "@/components/ForgotPassword";
+
+import GoogleButton from "../components/GoogleAuthButton";
+import userService from "../services/userService";
+import { LoginFormValues, validateLoginForm } from "../utils/formValidations";
+import { logResult } from "../utils/debugUtils";
+import ForgotPassword from "../components/forgot-password";
 
 export default function Login() {
   const router = useRouter();
@@ -38,22 +40,28 @@ export default function Login() {
     setSubmitting: (isSubmitting: boolean) => void
   ) => {
     try {
-      const response = await userService.login(values);
-      if (response.data && response.data.token) {
-        localStorage.setItem("comminq-token", response.data.token);
-        router.replace("/");
-      } else {
-        handleLoginError({ response: { data: { error: "Token not found" } } });
-      }
+      const response = await userService.login({
+        email: values.email,
+        password: values.password,
+      });
+
+      const token = response.data.token;
+      logResult(`Response : ${token}`);
+      localStorage.setItem("token", token);
+      router.replace("/verify-email");
     } catch (error) {
       handleLoginError(error);
     } finally {
       setSubmitting(false);
     }
   };
+
   // handleError
   const handleLoginError = (error: any) => {
+    logResult(`Error ${error}`);
     let errorMessage = "An error occurred during login.";
+    if (error) errorMessage = error;
+
     if (error.response && error.response.data && error.response.data.error)
       errorMessage = error.response.data.error;
 
@@ -84,12 +92,10 @@ export default function Login() {
         justify={"center"}
         bg={useColorModeValue("gray.50", "gray.800")}
       >
-        <Stack spacing={8} mx={"auto"} maxW={"lg"} py={12} px={6}>
-          <Stack align={"center"}>
-            <Heading textAlign="center" fontSize={"3xl"}>
-              🔐 Unlock the Comminq
-            </Heading>
-          </Stack>
+        <Stack spacing={8} mx={"auto"} w={"md"} py={12} px={6}>
+          <Heading textAlign="center" fontSize={"2xl"}>
+            🔐 Unlock the Comminq
+          </Heading>
           <Box
             rounded={"lg"}
             bg={useColorModeValue("white", "gray.700")}

@@ -16,7 +16,6 @@ Handle updating (
 */
 
 "use client";
-import Sidebar from "@/components/Sidebar";
 import {
   Box,
   Button,
@@ -29,8 +28,12 @@ import {
   Text,
   useColorModeValue,
 } from "@chakra-ui/react";
-import { ReactElement } from "react";
+import { ReactElement, useEffect, useState } from "react";
 import { FcAssistant } from "react-icons/fc";
+import Sidebar from "./components/Sidebar";
+import useProfile from "./hooks/useProfile";
+import VerifyEmailForm from "./verify-email/page";
+import { useRouter } from "next/navigation";
 
 interface CardProps {
   heading: string;
@@ -76,6 +79,22 @@ const Card = ({ heading, description, icon, href }: CardProps) => {
 };
 
 export default function Home() {
+  const router = useRouter();
+  const { profile, error, loading, refetchProfile } = useProfile();
+  const [token, setToken] = useState<string>("");
+
+  useEffect(() => {
+    const localToken = localStorage.getItem("token");
+    if (localToken) setToken(localToken);
+  }, [token]);
+
+  if (loading) return <h1>Loading...</h1>;
+
+  if (error === "Email is not verified. Please verify your email.")
+    return router.replace("/verify-email");
+
+  if (!token) return router.replace("/login");
+
   return (
     <Sidebar>
       <Box py={4}>
