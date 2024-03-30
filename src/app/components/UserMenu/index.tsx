@@ -19,7 +19,7 @@ import {
 } from "@chakra-ui/react";
 import { googleLogout } from "@react-oauth/google";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   FiEdit,
   FiLogOut,
@@ -73,12 +73,10 @@ export default function UserMenu() {
 
     if (item === "Change password") openUserChangePassword();
 
-    if (item === "Delete") {
-      openUserDeleteAccount();
-    }
-    if (item === "Logout") {
+    if (item === "Delete") openUserDeleteAccount();
+
+    if (item === "Logout")
       try {
-        // await userService.logout();
         localStorage.removeItem("token");
         router.replace("/login");
         googleLogout();
@@ -92,14 +90,13 @@ export default function UserMenu() {
           isClosable: true,
         });
       }
-    }
   };
 
-  useEffect(() => {
-    if (isUserProfileEditOpen) {
-      refetchProfile(); // Fetch the updated profile after closing the edit modal
-    }
-  }, [isUserProfileEditOpen, refetchProfile]);
+  // useEffect(() => {
+  //   if (isUserProfileEditOpen) {
+  //     refetchProfile();
+  //   }
+  // }, [isUserProfileEditOpen, refetchProfile]);
 
   return (
     <>

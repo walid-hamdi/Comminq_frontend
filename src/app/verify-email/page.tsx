@@ -1,54 +1,62 @@
 "use client";
-import React, { useEffect } from "react";
 import {
   Button,
   Center,
   Flex,
-  Stack,
   Heading,
+  Stack,
   useColorModeValue,
+  useToast,
 } from "@chakra-ui/react";
-import { useRouter } from "next/navigation";
 import { googleLogout } from "@react-oauth/google";
+import { useRouter } from "next/navigation";
+import useSendVerificationEmail from "../hooks/useSendVerificationEmail";
 import useProfile from "../hooks/useProfile";
 
-export default function VerifyEmailForm() {
+export default function VerifyEmailPage() {
   const router = useRouter();
   const gray50 = useColorModeValue("gray.50", "gray.800");
   const whiteGray700 = useColorModeValue("white", "gray.700");
   const gray800 = useColorModeValue("gray.800", "gray.400");
 
-  const { profile, error, loading, refetchProfile } = useProfile();
+  const { sendVerificationEmail, success } = useSendVerificationEmail();
+  const { emailToVerify, profile, loading, refetchProfile } = useProfile();
+  const toast = useToast();
 
   if (loading) {
     return <div>Loading...</div>;
   }
 
-  if (profile && !error) router.replace("/");
+  if (profile.isVerified) router.replace("/");
+
+  const handleRefreshing = () => {
+    refetchProfile();
+    if (profile.isVerified) router.replace("/");
+  };
+
+  const handleResendVerification = () => {
+    if (emailToVerify) sendVerificationEmail(emailToVerify);
+    if (success)
+      toast({
+        title: "Send email verification link",
+        description: "New email link verification has sent.",
+        status: "info",
+        duration: 3000,
+        isClosable: true,
+      });
+  };
 
   const handleCheckEmail = () => {
-    // Uncomment and modify as needed
-    // userService
-    //   .verifyCode(email, code)
-    //   .then((response) => {
-    //     logResult(`Verify code response: ${response}`);
-    //   })
-    //   .catch((error) => {
-    //     logResult(`Verify code error: ${error}`);
-    //   })
-    //   .finally(() => {});
-
-    // Redirect to Gmail inbox
     window.open("https://mail.google.com", "_blank");
   };
 
   const handleLogout = () => {
     localStorage.removeItem("token");
-    router.replace("/login");
     googleLogout();
+    router.replace("/login");
   };
 
-  if (error === "Email is not verified. Please verify your email.")
+  if (!profile.isVerified)
     return (
       <Flex minH={"100vh"} align={"center"} justify={"center"} bg={gray50}>
         <Stack
@@ -72,6 +80,7 @@ export default function VerifyEmailForm() {
           <Stack spacing={6}>
             <Button
               onClick={handleCheckEmail}
+              isLoading={loading}
               bg={"blue.400"}
               color={"white"}
               _hover={{
@@ -81,7 +90,32 @@ export default function VerifyEmailForm() {
               Check My Email
             </Button>
             <Button
+              onClick={handleRefreshing}
+              isLoading={loading}
+              loadingText="Refreshing..."
+              bg={"green.400"}
+              color={"white"}
+              _hover={{
+                bg: "green.500",
+              }}
+            >
+              Refresh
+            </Button>
+            <Button
+              onClick={handleResendVerification}
+              isLoading={loading}
+              bg={"orange.400"}
+              color={"white"}
+              _hover={{
+                bg: "orange.500",
+              }}
+            >
+              Resend Verification
+            </Button>
+
+            <Button
               onClick={handleLogout}
+              isLoading={loading}
               bg={"red.400"}
               color={"white"}
               _hover={{

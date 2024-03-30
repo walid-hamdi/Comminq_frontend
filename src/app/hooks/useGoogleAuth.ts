@@ -1,3 +1,4 @@
+"use client";
 import { useToast } from "@chakra-ui/react";
 import { useGoogleLogin } from "@react-oauth/google";
 import { useRouter } from "next/navigation";

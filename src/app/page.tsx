@@ -32,7 +32,6 @@ import { ReactElement, useEffect, useState } from "react";
 import { FcAssistant } from "react-icons/fc";
 import Sidebar from "./components/Sidebar";
 import useProfile from "./hooks/useProfile";
-import VerifyEmailForm from "./verify-email/page";
 import { useRouter } from "next/navigation";
 
 interface CardProps {
@@ -113,6 +112,7 @@ export default function Home() {
               sm: "repeat(2, 1fr)",
               md: "repeat(3, 1fr)",
               lg: "repeat(4, 1fr)",
+              xl: "repeat(5, 1fr)",
             }}
             gap={3}
             justifyItems="center"

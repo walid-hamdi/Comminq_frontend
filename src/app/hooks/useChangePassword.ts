@@ -13,13 +13,22 @@ const useChangePassword = () => {
     newPassword: string
   ) => {
     setLoading(true);
+    setError(null);
     userService
       .changePassword(id, currentPassword, newPassword)
-      .then(() => {
-        setSuccess(true);
-        logResult("Password changed successfully");
+      .then((response) => {
+        setLoading(false);
+        if (response.status === 200) {
+          setSuccess(true);
+          logResult("Password changed successfully");
+        } else {
+          setError(
+            "Failed to change password. Unexpected status: " + response.status
+          );
+        }
       })
       .catch((error) => {
+        setLoading(false);
         let errorMessage = "An error occurred while changing the password.";
         if (
           error.response &&
@@ -28,11 +37,7 @@ const useChangePassword = () => {
         ) {
           errorMessage = error.response.data.error;
         }
-        logError(errorMessage);
         setError(errorMessage);
-      })
-      .finally(() => {
-        setLoading(false);
       });
   };
 

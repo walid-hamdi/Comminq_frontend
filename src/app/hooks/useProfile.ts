@@ -7,18 +7,16 @@ interface Profile {
   id: string;
   name: string;
   picture: string;
+  isVerified: boolean;
   email: string;
   password: string;
-}
-
-interface ErrorResponse {
-  error: string;
 }
 
 const defaultProfile: Profile = {
   id: "",
   name: "",
   picture: "",
+  isVerified: false,
   email: "",
   password: "",
 };
@@ -26,24 +24,32 @@ const defaultProfile: Profile = {
 const useProfile = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [profile, setProfile] = useState<Profile>(defaultProfile);
+  const [success, setSuccess] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const [emailToVerify, setEmailToVerify] = useState<string | null>(null);
 
   const fetchProfile = () => {
+    setError(null);
     setLoading(true);
     userService
       .profile()
-      .then((res: AxiosResponse<ResponseProfile>) => {
-        const mappedProfile: Profile = {
-          id: res.data._id,
-          name: res.data.name,
-          picture: res.data.picture,
-          email: res.data.email,
-          password: res.data.password,
-        };
-        setProfile(mappedProfile);
-        logResult(res?.data);
+      .then((response: AxiosResponse<ResponseProfile>) => {
+        setLoading(false);
+        if (response.status === 200) {
+          setSuccess(true);
+          const mappedProfile: Profile = {
+            id: response.data._id,
+            name: response.data.name,
+            picture: response.data.picture,
+            isVerified: response.data.isVerified,
+            email: response.data.email,
+            password: response.data.password,
+          };
+          setProfile(mappedProfile);
+        }
       })
       .catch((error: any) => {
+        setLoading(false);
         let errorMessage = "An error occurred during retrieve user profile";
         if (
           error.response &&
@@ -51,12 +57,9 @@ const useProfile = () => {
           error.response.data.error
         ) {
           errorMessage = error.response.data.error;
+          setEmailToVerify(error.response.data["email"]);
         }
-        logError(errorMessage);
         setError(errorMessage);
-      })
-      .finally(() => {
-        setLoading(false);
       });
   };
 
@@ -68,7 +71,7 @@ const useProfile = () => {
     fetchProfile();
   };
 
-  return { profile, loading, error, refetchProfile };
+  return { profile, loading, success, error, emailToVerify, refetchProfile };
 };
 
 export default useProfile;
