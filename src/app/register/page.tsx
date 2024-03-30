@@ -14,16 +14,17 @@ import {
   useColorModeValue,
   useToast,
 } from "@chakra-ui/react";
+import * as Sentry from "@sentry/nextjs";
 import { useFormik } from "formik";
 import NextLink from "next/link";
 import { useRouter } from "next/navigation";
 import GoogleButton from "../components/GoogleAuthButton";
 import userService from "../services/userService";
+import { logResult } from "../utils/debugUtils";
 import {
   RegisterFormValues,
   validateRegisterForm,
 } from "../utils/formValidations";
-import { logResult } from "../utils/debugUtils";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -44,26 +45,21 @@ export default function RegisterPage() {
       logResult(`Response : ${token}`);
       localStorage.setItem("token", token);
       router.replace("/verify-email");
-    } catch (error) {
-      handleLoginError(error);
+    } catch (error: any) {
+      let errorMessage = "An error occurred during register.";
+      if (error.response && error.response.data && error.response.data.error)
+        errorMessage = error.response.data.error;
+      toast({
+        title: "Error",
+        description: errorMessage,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+      Sentry.captureException(errorMessage);
     } finally {
       setSubmitting(false);
     }
-  };
-
-  // handleError
-  const handleLoginError = (error: any) => {
-    let errorMessage = "An error occurred during register.";
-    if (error.response && error.response.data && error.response.data.error)
-      errorMessage = error.response.data.error;
-
-    toast({
-      title: "Error",
-      description: errorMessage,
-      status: "error",
-      duration: 3000,
-      isClosable: true,
-    });
   };
 
   const formik = useFormik<RegisterFormValues>({

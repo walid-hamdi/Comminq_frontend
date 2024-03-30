@@ -12,7 +12,6 @@ import {
   Stack,
   Text,
   useColorModeValue,
-  useDisclosure,
   useToast,
 } from "@chakra-ui/react";
 import { useFormik } from "formik";
@@ -21,19 +20,14 @@ import { useRouter } from "next/navigation";
 
 import GoogleButton from "../components/GoogleAuthButton";
 import userService from "../services/userService";
-import { LoginFormValues, validateLoginForm } from "../utils/formValidations";
 import { logResult } from "../utils/debugUtils";
-import ForgotPassword from "../components/forgot-password";
+import { LoginFormValues, validateLoginForm } from "../utils/formValidations";
+import * as Sentry from "@sentry/nextjs";
+import ForgotPasswordPage from "../forgot-password/page";
 
-export default function Login() {
+export default function LoginPage() {
   const router = useRouter();
   const toast = useToast();
-
-  const {
-    isOpen: isForgotPasswordOpen,
-    onOpen: openForgotPassword,
-    onClose: closeForgotPassword,
-  } = useDisclosure();
 
   const handleSubmit = async (
     values: LoginFormValues,
@@ -56,7 +50,6 @@ export default function Login() {
     }
   };
 
-  // handleError
   const handleLoginError = (error: any) => {
     logResult(`Error ${error}`);
     let errorMessage = "An error occurred during login.";
@@ -143,8 +136,8 @@ export default function Login() {
                     justify={"space-between"}
                   >
                     <Link
-                      // as={NextLink}
-                      onClick={() => openForgotPassword()}
+                      as={NextLink}
+                      href="/forgot-password"
                       color={"blue.400"}
                       cursor={"pointer"}
                     >
@@ -176,10 +169,6 @@ export default function Login() {
           </Text>
         </Stack>
       </Flex>
-      <ForgotPassword
-        isOpen={isForgotPasswordOpen}
-        onClose={closeForgotPassword}
-      />
     </>
   );
 }
