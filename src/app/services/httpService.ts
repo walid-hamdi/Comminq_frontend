@@ -31,12 +31,16 @@ class HttpService<TProfile, TAuth> {
     return await apiClient.get(`${this.endpoint}/logout`);
   }
 
-  async updateProfile(id: string, data: any, profilePicture: File | null) {
+  async updateProfile(
+    id: string,
+    data: { name: string; email: string; password?: string },
+    profilePicture: File | null
+  ) {
     const formData = new FormData();
     formData.append("data", JSON.stringify(data));
 
     if (profilePicture) {
-      formData.append("profile_picture", profilePicture);
+      formData.append("picture", profilePicture);
     }
 
     return await apiClient.patch<TProfile>(`${this.endpoint}/${id}`, formData);

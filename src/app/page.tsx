@@ -24,6 +24,7 @@ import {
   Grid,
   Heading,
   Icon,
+  Spinner,
   Stack,
   Text,
   useColorModeValue,
@@ -33,6 +34,7 @@ import { FcAssistant } from "react-icons/fc";
 import Sidebar from "./components/Sidebar";
 import useProfile from "./hooks/useProfile";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 interface CardProps {
   heading: string;
@@ -87,7 +89,15 @@ export default function Home() {
     if (localToken) setToken(localToken);
   }, [token]);
 
-  if (loading) return <h1>Loading...</h1>;
+  if (loading)
+    return (
+      <Box h="100vh" display="flex" alignItems="center" justifyContent="center">
+        <Stack spacing={4} align="center">
+          {/* <Image src="/assets/logo.png" alt="Logo" width={200} height={200} /> */}
+          <Spinner size="xl" color="blue.500" />
+        </Stack>
+      </Box>
+    );
 
   if (error === "Email is not verified. Please verify your email.")
     return router.replace("/verify-email");

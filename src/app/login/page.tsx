@@ -22,8 +22,6 @@ import GoogleButton from "../components/GoogleAuthButton";
 import userService from "../services/userService";
 import { logResult } from "../utils/debugUtils";
 import { LoginFormValues, validateLoginForm } from "../utils/formValidations";
-import * as Sentry from "@sentry/nextjs";
-import ForgotPasswordPage from "../forgot-password/page";
 
 export default function LoginPage() {
   const router = useRouter();
