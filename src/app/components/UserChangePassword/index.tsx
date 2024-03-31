@@ -41,16 +41,18 @@ const UserChangePassword = ({
   const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
-    if (error) {
-      toast({
-        title: "Password changed error",
-        description: error,
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
+    if (isOpen) {
+      if (error) {
+        toast({
+          title: "Password changed error",
+          description: error,
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+      }
     }
-  }, [error]);
+  }, [error, isOpen]);
 
   const handleSubmit = (
     values: ChangePasswordFormValues,
@@ -124,7 +126,7 @@ const UserChangePassword = ({
     <>
       <Modal isOpen={isOpen} onClose={handleFormReset} isCentered>
         <ModalOverlay />
-        <ModalContent>
+        <ModalContent mx={[4, "auto"]} my={[4, 0]} maxWidth={["auto", "80%"]}>
           <ModalHeader>Change Password</ModalHeader>
           <ModalCloseButton />
 

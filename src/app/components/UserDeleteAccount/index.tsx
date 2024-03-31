@@ -34,36 +34,37 @@ const UserDeleteAccount = ({
   const { loading, success, error, deleteAccount } = useDeleteAccount();
 
   useEffect(() => {
-    if (success) {
-      toast({
-        title: "Account Deleted",
-        description: "Your account has been deleted successfully.",
-        status: "info",
-        duration: 3000,
-        isClosable: true,
-      });
+    if (isOpen) {
+      if (success) {
+        toast({
+          title: "Account Deleted",
+          description: "Your account has been deleted successfully.",
+          status: "info",
+          duration: 3000,
+          isClosable: true,
+        });
 
-      localStorage.removeItem("token");
-      router.replace("/login");
-      googleLogout();
-
-      onClose();
-    } else if (error) {
-      toast({
-        title: "Error",
-        description: error,
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
+        localStorage.removeItem("token");
+        router.replace("/login");
+        googleLogout();
+        onClose();
+      } else if (error) {
+        toast({
+          title: "Error",
+          description: error,
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+      }
     }
-  }, [success, error, onClose, toast, router]);
+  }, [success, error, onClose, toast, router, isOpen]);
 
   return (
     <>
       <Modal isOpen={isOpen} onClose={onClose} isCentered>
         <ModalOverlay />
-        <ModalContent>
+        <ModalContent mx={[4, "auto"]} my={[4, 0]} maxWidth={["auto", "80%"]}>
           <ModalHeader>Delete Account</ModalHeader>
           <ModalCloseButton />
           <ModalBody>

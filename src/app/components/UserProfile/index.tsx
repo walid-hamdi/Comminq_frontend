@@ -87,7 +87,7 @@ const UserProfile = ({ isOpen, onClose, profile }: UserProfileProps) => {
   return (
     <Modal isOpen={isOpen} onClose={onClose} isCentered>
       <ModalOverlay />
-      <ModalContent>
+      <ModalContent mx={[4, "auto"]} my={[4, 0]} maxWidth={["auto", "80%"]}>
         <ModalHeader>Profile</ModalHeader>
         <ModalCloseButton />
         <ModalBody>{renderContent()}</ModalBody>
