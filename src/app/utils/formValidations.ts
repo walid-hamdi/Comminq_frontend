@@ -61,13 +61,15 @@ export const validateRegisterForm = (values: RegisterFormValues) => {
 };
 
 export const validateChangePasswordForm = (
-  values: ChangePasswordFormValues
+  values: ChangePasswordFormValues,
+  googleLogin: boolean
 ) => {
   const errors: Partial<ChangePasswordFormValues> = {};
 
-  if (!values.currentPassword) {
-    errors.currentPassword = "Current password is required";
-  }
+  if (!googleLogin)
+    if (!values.currentPassword) {
+      errors.currentPassword = "Current password is required";
+    }
 
   if (!values.newPassword) {
     errors.newPassword = "New password is required";
@@ -91,23 +93,20 @@ export const validateForgotPasswordForm = (
 ) => {
   const errors: Partial<ForgotPasswordFormValues> = {};
 
-  if (!showCodeField && !showPasswordField) {
+  if (!showCodeField && !showPasswordField)
     if (!values.email) {
       errors.email = "Email is required";
     }
-  }
 
-  if (showCodeField) {
+  if (showCodeField)
     if (!values.code) {
       errors.code = "Verification code is required";
     }
-  }
 
-  if (showPasswordField) {
+  if (showPasswordField)
     if (!values.newPassword) {
       errors.newPassword = "New password is required";
     }
-  }
 
   return errors;
 };

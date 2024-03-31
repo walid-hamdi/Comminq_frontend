@@ -14,9 +14,11 @@ import {
   Stack,
   useToast,
 } from "@chakra-ui/react";
-import * as Sentry from "@sentry/nextjs";
 import { useFormik } from "formik";
-import useChangePassword from "../../hooks/useChangePassword";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { Profile } from "../../entities/profile";
+import userService from "../../services/userService";
 import {
   ChangePasswordFormValues,
   validateChangePasswordForm,
@@ -25,68 +27,79 @@ import {
 interface UserChangePasswordProps {
   isOpen: boolean;
   onClose: () => void;
-  userId: string;
+  profile: Profile;
 }
 
 const UserChangePassword = ({
   isOpen,
   onClose,
-  userId,
+  profile,
 }: UserChangePasswordProps) => {
   const toast = useToast();
-  const { loading, success, error, changePassword } = useChangePassword();
+  const router = useRouter();
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (error) {
+      toast({
+        title: "Password changed error",
+        description: error,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+  }, [error]);
 
   const handleSubmit = (
     values: ChangePasswordFormValues,
     setSubmitting: (isSubmitting: boolean) => void
   ) => {
-    try {
-      if (values.newPassword !== values.confirmPassword) {
-        toast({
-          title: "New password match",
-          description: "New password and confirm password do not match.",
-          status: "error",
-          duration: 3000,
-          isClosable: true,
-        });
-      } else {
-        changePassword(userId, values.currentPassword, values.newPassword);
-        if (error) {
-          toast({
-            title: "Password changed error",
-            description: error,
-            status: "error",
-            duration: 3000,
-            isClosable: true,
-          });
-        }
-
-        if (success) {
-          toast({
-            title: "Password Changed",
-            description: "Your password has been changed successfully.",
-            status: "success",
-            duration: 3000,
-            isClosable: true,
-          });
-          onClose();
-          formik.resetForm();
-        }
-      }
-    } catch (error: any) {
-      let errorMessage = "An error occurred during register.";
-      if (error.response && error.response.data && error.response.data.error)
-        errorMessage = error.response.data.error;
+    if (values.newPassword !== values.confirmPassword) {
       toast({
-        title: "Error",
-        description: errorMessage,
+        title: "New password match",
+        description: "New password and confirm password do not match.",
         status: "error",
         duration: 3000,
         isClosable: true,
       });
-      Sentry.captureException(errorMessage);
-    } finally {
-      setSubmitting(false);
+    } else {
+      setLoading(true);
+      setError(null);
+      userService
+        .changePassword(profile.id, values.currentPassword, values.newPassword)
+        .then((response) => {
+          setLoading(false);
+          if (response.status === 200) {
+            toast({
+              title: "Password Changed",
+              description: "Your password has been changed successfully.",
+              status: "success",
+              duration: 3000,
+              isClosable: true,
+            });
+            formik.resetForm();
+            onClose();
+            return router.replace("/login");
+          } else {
+            setError(
+              "Failed to change password. Unexpected status: " + response.status
+            );
+          }
+        })
+        .catch((error) => {
+          setLoading(false);
+          let errorMessage = "An error occurred while changing the password.";
+          if (
+            error.response &&
+            error.response.data &&
+            error.response.data.error
+          ) {
+            errorMessage = error.response.data.error;
+          }
+          setError(errorMessage);
+        });
     }
   };
 
@@ -96,7 +109,8 @@ const UserChangePassword = ({
       newPassword: "",
       confirmPassword: "",
     },
-    validate: validateChangePasswordForm,
+    validate: (values) =>
+      validateChangePasswordForm(values, profile.googleLogin),
     onSubmit: (values, { setSubmitting }) =>
       handleSubmit(values, setSubmitting),
   });
@@ -117,26 +131,28 @@ const UserChangePassword = ({
           <form onSubmit={formik.handleSubmit}>
             <ModalBody>
               <Stack spacing={4}>
-                <FormControl
-                  id="currentPassword"
-                  isInvalid={
-                    !!formik.errors.currentPassword &&
-                    formik.touched.currentPassword
-                  }
-                >
-                  <FormLabel>Current Password</FormLabel>
-                  <Input
-                    type="password"
+                {!profile.googleLogin && (
+                  <FormControl
                     id="currentPassword"
-                    name="currentPassword"
-                    onChange={formik.handleChange}
-                    onBlur={formik.handleBlur}
-                    value={formik.values.currentPassword}
-                  />
-                  <FormErrorMessage>
-                    {formik.errors.currentPassword}
-                  </FormErrorMessage>
-                </FormControl>
+                    isInvalid={
+                      !!formik.errors.currentPassword &&
+                      formik.touched.currentPassword
+                    }
+                  >
+                    <FormLabel>Current Password</FormLabel>
+                    <Input
+                      type="password"
+                      id="currentPassword"
+                      name="currentPassword"
+                      onChange={formik.handleChange}
+                      onBlur={formik.handleBlur}
+                      value={formik.values.currentPassword}
+                    />
+                    <FormErrorMessage>
+                      {formik.errors.currentPassword}
+                    </FormErrorMessage>
+                  </FormControl>
+                )}
                 <FormControl
                   id="newPassword"
                   isInvalid={
@@ -156,7 +172,6 @@ const UserChangePassword = ({
                     {formik.errors.newPassword}
                   </FormErrorMessage>
                 </FormControl>
-
                 <FormControl
                   id="confirmPassword"
                   isInvalid={

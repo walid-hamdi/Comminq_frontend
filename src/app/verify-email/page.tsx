@@ -20,7 +20,7 @@ export default function VerifyEmailPage() {
   const gray800 = useColorModeValue("gray.800", "gray.400");
 
   const { sendVerificationEmail, success } = useSendVerificationEmail();
-  const { emailToVerify, profile, loading, refetchProfile } = useProfile();
+  const { emailToVerify, profile, loading, fetchProfile } = useProfile();
   const toast = useToast();
 
   if (loading) {
@@ -30,7 +30,7 @@ export default function VerifyEmailPage() {
   if (profile.isVerified) router.replace("/");
 
   const handleRefreshing = () => {
-    refetchProfile();
+    fetchProfile();
     if (profile.isVerified) router.replace("/");
   };
 

@@ -2,67 +2,28 @@ import {
   Alert,
   AlertIcon,
   Avatar,
-  Flex,
-  Text,
   Box,
-  Stack,
+  Flex,
   Heading,
   Modal,
-  ModalOverlay,
+  ModalBody,
+  ModalCloseButton,
   ModalContent,
   ModalHeader,
-  ModalCloseButton,
-  ModalBody,
+  ModalOverlay,
+  Stack,
+  Text,
 } from "@chakra-ui/react";
-import { logResult } from "../../utils/debugUtils";
-// import useProfile from "@/hooks/useProfile";
-
-interface Profile {
-  id: string;
-  name: string;
-  picture: string;
-  email: string;
-  password: string;
-}
+import { Profile } from "../../entities/profile";
 
 interface UserProfileProps {
   isOpen: boolean;
   onClose: () => void;
-  initialProfile: Profile;
+  profile: Profile;
 }
 
-const UserProfile = ({
-  isOpen,
-  onClose,
-  initialProfile: profile,
-}: UserProfileProps) => {
-  // const { profile, error, loading } = useProfile();
-
+const UserProfile = ({ isOpen, onClose, profile }: UserProfileProps) => {
   const renderContent = () => {
-    {
-      logResult(`PROFILE ${profile}`);
-    }
-    // if (error) {
-    //   return (
-    //     <Flex justify="center" align="center">
-    //       <Alert status="error" variant="left-accent">
-    //         <AlertIcon />
-    //         Error: {error}
-    //       </Alert>
-    //     </Flex>
-    //   );
-    // }
-
-    // if (loading || !profile) {
-    //   return (
-    //     <Flex justify="center" align="center">
-    //       <Alert status="info" variant="left-accent">
-    //         <AlertIcon />
-    //         Loading user profile...
-    //       </Alert>
-    //     </Flex>
-    //   );
-    // }
     if (!profile) {
       return (
         <Flex justify="center" align="center">

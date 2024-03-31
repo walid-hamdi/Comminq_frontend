@@ -44,80 +44,65 @@ const UserProfileEdit = ({
   initialProfile: profile,
 }: UserProfileEditProps) => {
   const toast = useToast();
-  const {
-    loading: updateLoading,
-    success,
-    error,
-    updateProfile,
-  } = useUpdateProfile();
+  const { loading, success, error, updateProfile } = useUpdateProfile();
 
-  const [updatedProfile, setUpdatedProfile] = useState<Profile>(profile);
   const [profilePicture, setProfilePicture] = useState<File | null>(null);
-
-  useEffect(() => {
-    if (profile) {
-      setUpdatedProfile(profile);
-    }
-  }, [profile]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setUpdatedProfile((prevProfile) => ({
-      ...prevProfile,
-      [name]: value,
-    }));
+    // setUpdatedProfile((prevProfile) => ({
+    //   ...prevProfile,
+    //   [name]: value,
+    // }));
   };
 
   const handleUpdateProfile = () => {
-    const isProfileUnchanged =
-      updatedProfile.name === profile.name &&
-      updatedProfile.email === profile.email &&
-      updatedProfile.password === profile.password &&
-      profilePicture === null;
-
-    if (isProfileUnchanged) {
-      toast({
-        title: "No changes made",
-        description: "There are no changes to the profile.",
-        status: "info",
-        duration: 3000,
-        isClosable: true,
-      });
-      onClose();
-    } else {
-      updateProfile(profile.id, updatedProfile, profilePicture);
-    }
+    // const isProfileUnchanged =
+    // updatedProfile.name === profile.name &&
+    // updatedProfile.email === profile.email &&
+    // updatedProfile.password === profile.password &&
+    // profilePicture === null;
+    // if (isProfileUnchanged) {
+    //   toast({
+    //     title: "No changes made",
+    //     description: "There are no changes to the profile.",
+    //     status: "info",
+    //     duration: 3000,
+    //     isClosable: true,
+    //   });
+    //   onClose();
+    // } else {
+    //   updateProfile(profile.id, updatedProfile, profilePicture);
+    // }
   };
 
-  useEffect(() => {
-    if (success) {
-      toast({
-        title: "Profile Updated",
-        description: "Your profile has been updated successfully.",
-        status: "success",
-        duration: 3000,
-        isClosable: true,
-      });
-      // refetchProfile();
-      onClose();
-    } else if (error) {
-      toast({
-        title: "Error",
-        description: error,
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
-    }
-  }, [success, error, toast, onClose]);
+  // useEffect(() => {
+  //   if (success) {
+  //     toast({
+  //       title: "Profile Updated",
+  //       description: "Your profile has been updated successfully.",
+  //       status: "success",
+  //       duration: 3000,
+  //       isClosable: true,
+  //     });
+  //     onClose();
+  //   } else if (error) {
+  //     toast({
+  //       title: "Error",
+  //       description: error,
+  //       status: "error",
+  //       duration: 3000,
+  //       isClosable: true,
+  //     });
+  //   }
+  // }, [success, error, toast, onClose]);
 
   const handleFileSelect = (file: File) => {
     setProfilePicture(file);
-    // Update the local state of the profile picture
-    setUpdatedProfile((prevProfile) => ({
-      ...prevProfile,
-      picture: URL.createObjectURL(file), // Store the local file URL
-    }));
+    // setUpdatedProfile((prevProfile) => ({
+    //   ...prevProfile,
+    //   picture: URL.createObjectURL(file),
+    // }));
   };
 
   const handleRemovePicture = () => {
@@ -131,7 +116,6 @@ const UserProfileEdit = ({
 
   return (
     <>
-      {logResult(`profile for edit ${profile}`)}
       <Modal isOpen={isOpen} onClose={onClose} isCentered>
         <ModalOverlay />
         <ModalContent>
@@ -143,7 +127,7 @@ const UserProfileEdit = ({
                 <FormLabel>Profile Picture</FormLabel>
                 <Stack direction={["column", "row"]} spacing={6}>
                   <Center>
-                    <Avatar size="xl" src={updatedProfile.picture}>
+                    {/* <Avatar size="xl" src={updatedProfile.picture}>
                       <AvatarBadge
                         as={IconButton}
                         size="sm"
@@ -152,9 +136,9 @@ const UserProfileEdit = ({
                         colorScheme="red"
                         aria-label="remove Image"
                         icon={<SmallCloseIcon />}
-                        onClick={handleRemovePicture} // Add this line
+                        onClick={handleRemovePicture}
                       />
-                    </Avatar>
+                    </Avatar> */}
                   </Center>
                   <Center w="full">
                     <FileUploader onFileSelect={handleFileSelect} />
@@ -165,7 +149,7 @@ const UserProfileEdit = ({
                 <FormLabel>Name</FormLabel>
                 <Input
                   placeholder="Name"
-                  value={updatedProfile.name}
+                  // value={updatedProfile.name}
                   onChange={handleInputChange}
                   name="name"
                   _placeholder={{ color: "gray.500" }}
@@ -176,7 +160,7 @@ const UserProfileEdit = ({
                 <FormLabel>Email address</FormLabel>
                 <Input
                   placeholder="your-email@example.com"
-                  value={updatedProfile.email}
+                  // value={updatedProfile.email}
                   onChange={handleInputChange}
                   name="email"
                   _placeholder={{ color: "gray.500" }}
@@ -192,8 +176,8 @@ const UserProfileEdit = ({
             <Button
               bg={"blue.400"}
               color={"white"}
-              isLoading={updateLoading}
-              disabled={updateLoading}
+              isLoading={loading}
+              disabled={loading}
               onClick={handleUpdateProfile}
             >
               Update

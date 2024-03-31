@@ -79,7 +79,7 @@ const Card = ({ heading, description, icon, href }: CardProps) => {
 
 export default function Home() {
   const router = useRouter();
-  const { profile, error, loading, refetchProfile } = useProfile();
+  const { error, loading } = useProfile();
   const [token, setToken] = useState<string>("");
 
   useEffect(() => {

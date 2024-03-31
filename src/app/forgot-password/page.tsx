@@ -19,12 +19,11 @@ import NextLink from "next/link";
 import { useRouter } from "next/navigation";
 
 import { useEffect, useState } from "react";
-import useForgotPassword from "../hooks/useForgotPassword";
+import userService from "../services/userService";
 import {
   ForgotPasswordFormValues,
   validateForgotPasswordForm,
 } from "../utils/formValidations";
-import userService from "../services/userService";
 
 export default function ForgotPasswordPage() {
   const router = useRouter();
