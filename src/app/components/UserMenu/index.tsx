@@ -19,7 +19,7 @@ import {
 } from "@chakra-ui/react";
 import { googleLogout } from "@react-oauth/google";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   FiEdit,
   FiLogOut,
@@ -36,7 +36,7 @@ import UserProfileEdit from "../UserProfileEdit";
 
 export default function UserMenu() {
   const [isOpen, setIsOpen] = useState(false);
-  const { profile, error, loading, refetchProfile } = useProfile();
+  const { profile, error, loading, fetchProfile } = useProfile();
   const toast = useToast();
   const router = useRouter();
 
@@ -91,12 +91,6 @@ export default function UserMenu() {
         });
       }
   };
-
-  // useEffect(() => {
-  //   if (isUserProfileEditOpen) {
-  //     refetchProfile();
-  //   }
-  // }, [isUserProfileEditOpen, refetchProfile]);
 
   return (
     <>
@@ -182,12 +176,12 @@ export default function UserMenu() {
           </MenuItem>
         </MenuList>
       </Menu>
+
       <UserProfile
         isOpen={isUserProfileOpen}
         onClose={closeUserProfile}
-        initialProfile={profile}
+        profile={profile}
       />
-
       <UserProfileEdit
         userId={profile.id}
         isOpen={isUserProfileEditOpen}
@@ -195,7 +189,7 @@ export default function UserMenu() {
         initialProfile={profile}
       />
       <UserChangePassword
-        userId={profile.id}
+        profile={profile}
         isOpen={isUserChangePasswordOpen}
         onClose={closeUserChangePassword}
       />

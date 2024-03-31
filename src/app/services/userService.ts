@@ -5,6 +5,7 @@ export interface ResponseProfile {
   name: string;
   email: string;
   isVerified: boolean;
+  googleLogin: boolean;
   password: string;
   picture: string;
 }

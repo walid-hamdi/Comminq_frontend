@@ -2,21 +2,14 @@ import { AxiosResponse } from "axios";
 import { useEffect, useState } from "react";
 import userService, { ResponseProfile } from "../services/userService";
 import { logError, logResult } from "../utils/debugUtils";
-
-interface Profile {
-  id: string;
-  name: string;
-  picture: string;
-  isVerified: boolean;
-  email: string;
-  password: string;
-}
+import { Profile } from "../entities/profile";
 
 const defaultProfile: Profile = {
   id: "",
   name: "",
   picture: "",
   isVerified: false,
+  googleLogin: false,
   email: "",
   password: "",
 };
@@ -42,6 +35,7 @@ const useProfile = () => {
             name: response.data.name,
             picture: response.data.picture,
             isVerified: response.data.isVerified,
+            googleLogin: response.data.googleLogin,
             email: response.data.email,
             password: response.data.password,
           };
@@ -67,11 +61,7 @@ const useProfile = () => {
     fetchProfile();
   }, []);
 
-  const refetchProfile = () => {
-    fetchProfile();
-  };
-
-  return { profile, loading, success, error, emailToVerify, refetchProfile };
+  return { profile, loading, success, error, emailToVerify, fetchProfile };
 };
 
 export default useProfile;
