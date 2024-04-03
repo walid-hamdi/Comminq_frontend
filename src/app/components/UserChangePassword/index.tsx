@@ -83,7 +83,6 @@ const UserChangePassword = ({
             });
             formik.resetForm();
             onClose();
-            return router.replace("/login");
           } else {
             setError(
               "Failed to change password. Unexpected status: " + response.status
@@ -126,7 +125,11 @@ const UserChangePassword = ({
     <>
       <Modal isOpen={isOpen} onClose={handleFormReset} isCentered>
         <ModalOverlay />
-        <ModalContent mx={[4, "auto"]} my={[4, 0]} maxWidth={["auto", "80%"]}>
+        <ModalContent
+          mx={[4, "auto"]}
+          my={[4, "auto"]}
+          width={["100%", "80%", "60%"]}
+        >
           <ModalHeader>Change Password</ModalHeader>
           <ModalCloseButton />
 

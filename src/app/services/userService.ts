@@ -7,7 +7,10 @@ export interface ResponseProfile {
   isVerified: boolean;
   googleLogin: boolean;
   password: string;
-  picture: string;
+  picture: {
+    url: string;
+    public_id: string | null;
+  };
 }
 
 export default create<ResponseProfile, any>("api/user");

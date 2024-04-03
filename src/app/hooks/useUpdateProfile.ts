@@ -5,7 +5,10 @@ import { logError, logResult } from "../utils/debugUtils";
 interface Profile {
   id: string;
   name: string;
-  picture: string;
+  picture: {
+    url: string;
+    public_id: string;
+  };
   email: string;
   password: string;
 }

@@ -50,12 +50,6 @@ export default function VerifyEmailPage() {
     window.open("https://mail.google.com", "_blank");
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    googleLogout();
-    router.replace("/login");
-  };
-
   if (!profile.isVerified)
     return (
       <Flex minH={"100vh"} align={"center"} justify={"center"} bg={gray50}>
@@ -114,7 +108,11 @@ export default function VerifyEmailPage() {
             </Button>
 
             <Button
-              onClick={handleLogout}
+              onClick={() => {
+                googleLogout();
+                localStorage.removeItem("token");
+                router.replace("/login");
+              }}
               isLoading={loading}
               bg={"red.400"}
               color={"white"}
