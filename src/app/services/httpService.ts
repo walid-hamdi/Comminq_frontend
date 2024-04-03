@@ -31,20 +31,26 @@ class HttpService<TProfile, TAuth> {
     return await apiClient.get(`${this.endpoint}/logout`);
   }
 
-  async updateProfile(
-    id: string,
-    data: { name: string; email: string; password?: string },
-    profilePicture: File | null
-  ) {
+  async updateProfile(id: string, data: any, profilePicture: File | null) {
     const formData = new FormData();
-    formData.append("data", JSON.stringify(data));
+
+    Object.keys(data).forEach((key) => {
+      formData.append(key, data[key]);
+    });
 
     if (profilePicture) {
-      formData.append("picture", profilePicture);
+      formData.append("profilePicture", profilePicture);
     }
-
-    return await apiClient.patch<TProfile>(`${this.endpoint}/${id}`, formData);
+    return await apiClient.patch<TProfile>(`${this.endpoint}/${id}`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
   }
+
+  deleteProfilePicture = async (id: string) => {
+    return await apiClient.delete(`${this.endpoint}/${id}/picture`);
+  };
 
   async deleteProfile(id: string) {
     return await apiClient.delete(`${this.endpoint}/${id}`, {

@@ -44,9 +44,9 @@ const UserDeleteAccount = ({
           isClosable: true,
         });
 
+        googleLogout();
         localStorage.removeItem("token");
         router.replace("/login");
-        googleLogout();
         onClose();
       } else if (error) {
         toast({
@@ -64,7 +64,11 @@ const UserDeleteAccount = ({
     <>
       <Modal isOpen={isOpen} onClose={onClose} isCentered>
         <ModalOverlay />
-        <ModalContent mx={[4, "auto"]} my={[4, 0]} maxWidth={["auto", "80%"]}>
+        <ModalContent
+          mx={[4, "auto"]}
+          my={[4, "auto"]}
+          width={["100%", "80%", "60%"]}
+        >
           <ModalHeader>Delete Account</ModalHeader>
           <ModalCloseButton />
           <ModalBody>

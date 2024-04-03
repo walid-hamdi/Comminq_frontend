@@ -77,9 +77,9 @@ export default function UserMenu() {
 
     if (item === "Logout")
       try {
+        googleLogout();
         localStorage.removeItem("token");
         router.replace("/login");
-        googleLogout();
       } catch (error: any) {
         let errorMessage = "An error occurred during logout.";
         toast({
@@ -129,7 +129,11 @@ export default function UserMenu() {
                 borderRadius="md"
               >
                 <>
-                  <Avatar size="sm" name={profile.name} src={profile.picture}>
+                  <Avatar
+                    size="sm"
+                    name={profile.name}
+                    src={profile.picture?.url ?? ""}
+                  >
                     <AvatarBadge boxSize="1em" bg="green.500" />
                   </Avatar>
                   <Text fontSize="sm" mx="3">

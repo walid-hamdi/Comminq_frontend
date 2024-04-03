@@ -7,7 +7,10 @@ import { Profile } from "../entities/profile";
 const defaultProfile: Profile = {
   id: "",
   name: "",
-  picture: "",
+  picture: {
+    public_id: null,
+    url: "",
+  },
   isVerified: false,
   googleLogin: false,
   email: "",

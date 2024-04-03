@@ -49,7 +49,7 @@ const UserProfile = ({ isOpen, onClose, profile }: UserProfileProps) => {
         <Flex justify={"center"}>
           <Avatar
             size={"xl"}
-            src={picture}
+            src={picture?.url ?? ""}
             name={name}
             css={{
               border: "2px solid white",
@@ -87,7 +87,11 @@ const UserProfile = ({ isOpen, onClose, profile }: UserProfileProps) => {
   return (
     <Modal isOpen={isOpen} onClose={onClose} isCentered>
       <ModalOverlay />
-      <ModalContent mx={[4, "auto"]} my={[4, 0]} maxWidth={["auto", "80%"]}>
+      <ModalContent
+        mx={[4, "auto"]}
+        my={[4, "auto"]}
+        width={["100%", "80%", "60%"]}
+      >
         <ModalHeader>Profile</ModalHeader>
         <ModalCloseButton />
         <ModalBody>{renderContent()}</ModalBody>

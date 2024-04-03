@@ -25,7 +25,6 @@ export interface ForgotPasswordFormValues {
 export interface EditFormValues {
   name: string;
   email: string;
-  password: string;
 }
 
 export const validateLoginForm = (values: LoginFormValues) => {
@@ -122,9 +121,6 @@ export const validateEditForm = (values: EditFormValues) => {
 
   if (!values.name) errors.name = "Name is required";
   if (!values.email) errors.email = "Email is required";
-  if (values.email !== undefined && values.email !== "") {
-    if (!values.password) errors.password = "Password is required";
-  }
 
   return errors;
 };

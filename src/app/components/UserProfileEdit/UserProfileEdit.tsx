@@ -1,8 +1,14 @@
+import { SmallCloseIcon } from "@chakra-ui/icons";
 import {
+  Avatar,
+  AvatarBadge,
+  Box,
   Button,
+  Center,
   FormControl,
   FormErrorMessage,
   FormLabel,
+  IconButton,
   Input,
   Modal,
   ModalBody,
@@ -12,9 +18,12 @@ import {
   ModalHeader,
   ModalOverlay,
   Stack,
+  Text,
   useToast,
 } from "@chakra-ui/react";
+import { googleLogout } from "@react-oauth/google";
 import { useFormik } from "formik";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Profile } from "../../entities/profile";
 import userService from "../../services/userService";
@@ -32,11 +41,44 @@ export const UserProfileEdit = ({
   profile,
 }: UserProfileEditProps) => {
   const toast = useToast();
+  const router = useRouter();
   const [profilePicture, setProfilePicture] = useState<File | null>(null);
   const [success, setSuccess] = useState<boolean>(false);
   const [error, setError] = useState<null | string>(null);
   const [loading, setLoading] = useState<boolean>(false);
-  const [showPassword, setShowPassword] = useState<boolean>(false);
+
+  const handlePictureRemoved = () => {
+    setError(null);
+    setLoading(true);
+    userService
+      .deleteProfilePicture(profile.id)
+      .then((response) => {
+        setLoading(false);
+        if (response.status === 200) {
+          setProfilePicture(null);
+          setSuccess(true);
+        }
+      })
+      .catch((error) => {
+        setLoading(false);
+        let errorMessage = "An error occurred while updating the profile.";
+        if (
+          error.response &&
+          error.response.data &&
+          error.response.data.error
+        ) {
+          errorMessage = error.response.data.error;
+        }
+        setError(errorMessage);
+      });
+  };
+
+  const handleFileSelected = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      const selectedFile = e.target.files[0];
+      setProfilePicture(selectedFile);
+    }
+  };
 
   useEffect(() => {
     if (isOpen) {
@@ -44,7 +86,6 @@ export const UserProfileEdit = ({
         formik.setValues({
           name: profile.name,
           email: profile.email,
-          password: "",
         });
       }
 
@@ -57,6 +98,7 @@ export const UserProfileEdit = ({
           isClosable: true,
         });
         onClose();
+        setSuccess(false);
       } else if (error) {
         toast({
           title: "Error",
@@ -65,6 +107,7 @@ export const UserProfileEdit = ({
           duration: 3000,
           isClosable: true,
         });
+        setError("");
       }
     }
   }, [success, error, toast, onClose, isOpen, profile]);
@@ -73,9 +116,11 @@ export const UserProfileEdit = ({
     values: EditFormValues,
     setSubmitting: (isSubmitting: boolean) => void
   ) => {
+    console.log(profilePicture, profile.picture);
     if (
       profile.name === values.name.trim() &&
-      profile.email === values.email.trim()
+      profile.email === values.email.trim() &&
+      profile.picture.url === (profilePicture ? profilePicture.name : null)
     )
       return toast({
         title: "No updated!",
@@ -87,6 +132,7 @@ export const UserProfileEdit = ({
 
     setError(null);
     setLoading(true);
+
     userService
       .updateProfile(profile.id, { ...values }, profilePicture)
       .then((response) => {
@@ -117,7 +163,6 @@ export const UserProfileEdit = ({
     initialValues: {
       name: profile.name,
       email: profile.email,
-      password: "",
     },
     validate: validateEditForm,
     onSubmit: (values, { setSubmitting }) =>
@@ -133,19 +178,27 @@ export const UserProfileEdit = ({
     <>
       <Modal isOpen={isOpen} onClose={handleClose} isCentered>
         <ModalOverlay />
-        <ModalContent mx={[4, "auto"]} my={[4, 0]} maxWidth={["auto", "80%"]}>
+        <ModalContent
+          mx={[4, "auto"]}
+          my={[4, "auto"]}
+          width={["100%", "80%", "60%"]}
+        >
           <ModalHeader>Edit profile</ModalHeader>
           <ModalCloseButton />
           <form onSubmit={formik.handleSubmit}>
             <ModalBody>
               <Stack spacing={4}>
-                {/* <FormControl id="picture"> */}
-                {/* <FormLabel>Profile Picture</FormLabel> */}
-                {/* <Stack direction={["column", "row"]} spacing={6}>
+                <FormControl id="picture">
+                  <FormLabel>Profile Picture</FormLabel>
+                  <Stack direction={["column", "row"]} spacing={6}>
                     <Center>
                       <Avatar
                         size="xl"
-                        src={updatedProfile.picture}
+                        src={
+                          profilePicture
+                            ? URL.createObjectURL(profilePicture)
+                            : profile.picture?.url
+                        }
                       >
                         <AvatarBadge
                           as={IconButton}
@@ -154,16 +207,39 @@ export const UserProfileEdit = ({
                           top="-10px"
                           colorScheme="red"
                           aria-label="remove Image"
+                          isLoading={loading}
                           icon={<SmallCloseIcon />}
-                          onClick={handleRemovePicture}
+                          onClick={handlePictureRemoved}
                         />
                       </Avatar>
                     </Center>
                     <Center w="full">
-                      <FileUploader onFileSelect={handleFileSelect} />
+                      <Box>
+                        <Input
+                          type="file"
+                          accept="image/*"
+                          onChange={handleFileSelected}
+                          display="none"
+                          id="file-uploader"
+                        />
+                        <label htmlFor="file-uploader">
+                          <Button
+                            cursor="pointer"
+                            size="sm"
+                            as="span"
+                            colorScheme="blue"
+                            isLoading={loading}
+                          >
+                            Change profile picture
+                          </Button>
+                        </label>
+                        <Text mt={2} fontSize="sm" color="gray.500">
+                          Accepted file types: JPEG, PNG
+                        </Text>
+                      </Box>
                     </Center>
-                  </Stack> */}
-                {/* </FormControl> */}
+                  </Stack>
+                </FormControl>
                 <FormControl
                   id="name"
                   isInvalid={!!formik.errors.name && formik.touched.name}
@@ -188,45 +264,12 @@ export const UserProfileEdit = ({
                     id="email"
                     type="email"
                     name="email"
-                    onChange={(e) => {
-                      formik.handleChange(e);
-                      if (
-                        validateEditForm({
-                          ...formik.values,
-                          email: e.target.value,
-                        }).email === null
-                      ) {
-                        setShowPassword(true);
-                      } else {
-                        setShowPassword(false);
-                      }
-                    }}
+                    onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
                     value={formik.values.email}
                   />
                   <FormErrorMessage>{formik.errors.email}</FormErrorMessage>
                 </FormControl>
-                {showPassword && (
-                  <FormControl
-                    id="password"
-                    isInvalid={
-                      !!formik.errors.password && formik.touched.password
-                    }
-                  >
-                    <FormLabel>Password</FormLabel>
-                    <Input
-                      id="password"
-                      type="password"
-                      name="password"
-                      onChange={formik.handleChange}
-                      onBlur={formik.handleBlur}
-                      value={formik.values.password}
-                    />
-                    <FormErrorMessage>
-                      {formik.errors.password}
-                    </FormErrorMessage>
-                  </FormControl>
-                )}
               </Stack>
             </ModalBody>
             <ModalFooter>
@@ -254,3 +297,6 @@ export const UserProfileEdit = ({
     </>
   );
 };
+function useRef(arg0: null) {
+  throw new Error("Function not implemented.");
+}
